@@ -25,6 +25,25 @@ function updateToggleIcon(theme) {
     themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
 }
 
+// 移动端菜单切换
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileMenuToggle) {
+    mobileMenuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        mobileMenuToggle.classList.toggle('active');
+    });
+}
+
+// 点击导航链接后关闭移动菜单
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+    });
+});
+
 // 添加一个简单的动画效果到项目卡片
 document.querySelectorAll('.project-card, .skill-item').forEach((card, index) => {
     card.style.animationDelay = `${index * 0.1}s`;
