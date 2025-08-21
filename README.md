@@ -1,9 +1,8 @@
-# Deng DX 个人主页
+# DX 的个人主页
 
-![GitHub last commit](https://img.shields.io/github/last-commit/Dengdxx/Dengdxx.github.io)
-![GitHub](https://img.shields.io/github/license/Dengdxx/Dengdxx.github.io)
+#
 
-> 机器人开发者 Deng DX 的个人主页，专注于机器人技术、人工智能和编程经验分享。
+> 机器人开发者 DX 的个人主页，专注于机器人技术、人工智能和编程经验分享。
 
 ## 简介
 
@@ -74,15 +73,14 @@
 # 使用 Python
 python -m http.server 8000
 
-# 使用 Node.js (http-server)
+# 或者使用 Node.js (http-server)
 npx http-server
 
-# 使用 VS Code Live Server 插件
 ```
 
 ## 部署
 
-项目通过 GitHub Pages 自动部署，将代码推送到 `main` 分支即可自动更新网站。
+项目通过 GitHub Pages 自动部署，将代码推送到 `username.github.io/main` 分支即可自动更新网站。
 
 ## 许可证
 
