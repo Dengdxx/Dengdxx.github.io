@@ -68,31 +68,6 @@
 | **数学公式** | MathJax | LaTeX 数学公式渲染 |
 | **部署** | GitHub Pages | 自动化部署 |
 
-## 📁 项目结构
-
-```
- Dengdxx.github.io/
-├──  index.html              # 🏠 主页 - 个人简介和项目展示
-├──  blog.html               # 📝 博客列表页 - 文章索引和搜索
-├──  post.html               # 📖 文章详情页 - 单篇文章展示
-├──  404.html                # ❌ 404 页面 - 自定义错误页
-├──  CNAME                   # 🌐 域名配置文件
-├──  LICENSE                 # 📜 MIT 开源协议
-├──  package.json            # 📦 项目配置文件
-├──  assets/                 # 📂 静态资源目录
-│   ├──  css/               # 🎨 样式文件
-│   │   ├──  style.css      # 主页样式（响应式 + 主题）
-│   │   └──  blog.css        # 博客样式（文章渲染 + 交互）
-│   ├──  js/                # ⚙️ JavaScript 脚本
-│   │   ├── script.js       # 主页交互脚本
-│   │   ├── blog.js         # 博客系统核心逻辑
-│   │   └── particles.js      # 背景粒子特效
-│   └──  data/              # 🗃️ 数据文件
-│       └── posts.json       # 博客文章数据存储
-├──  docs/                  # 📚 文档目录
-│   └──  images/           # 🖼️ README 图片资源
-└──  README.md              # 📖 项目说明文档
-```
 
 
 ## 📝 博客系统
@@ -112,7 +87,7 @@
 
 #### 🔒 权限控制
 ```
-管理员密码：qweasd123
+默认管理员密码：qweasd123
 ```
 - 新增、编辑、删除文章需要密码验证
 
@@ -144,19 +119,16 @@
 # 克隆仓库
 git clone https://github.com/Dengdxx/Dengdxx.github.io.git
 
-# 进入项目目录
-cd Dengdxx.github.io
-
-# 双击 index.html 文件
+# 进入项目目录，双击 index.html 文件
 ```
 
 #### 方法 2：使用 Python 服务器
 ```bash
-# Python 3.x
+# Python3
 python -m http.server 8000
 
 
-# 访问 http://localhost:8000
+# 浏览器访问 http://localhost:8000
 ```
 
 #### 方法 3：使用 Node.js 服务器
