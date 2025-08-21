@@ -95,6 +95,68 @@
             50% { transform: translateY(-10px); }
         }
         
+        /* Dinosaur Game Styles */
+        .dinosaur-game-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-middle), var(--bg-gradient-end));
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 800px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        .game-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00DBDE, #FC00FF);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .game-instructions {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .game-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+        
+        .game-close-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        #dinosaur-game canvas {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
         @media (max-width: 768px) {
             .error-code {
                 font-size: 6rem;
@@ -111,6 +173,16 @@
             
             .error-button {
                 width: 200px;
+            }
+            
+            .game-info {
+                width: 90vw;
+                font-size: 0.9rem;
+            }
+            
+            #dinosaur-game canvas {
+                width: 90vw;
+                height: auto;
             }
         }
     </style>
@@ -137,7 +209,8 @@
         <h2 class="error-message">页面走丢了</h2>
         <p class="error-description">
             抱歉，您访问的页面不存在。可能是链接错误，或者页面已被移动。
-            不过别担心，让我帮您找到正确的路径！
+            不过别担心，让我帮您找到正确的路径！<br>
+            <small style="opacity: 0.5; font-size: 0.9rem;">💡 小提示：试试点击上面的机器人...</small>
         </p>
         
         <div class="error-actions">
@@ -149,5 +222,6 @@
     
     <script src="assets/js/script.js"></script>
     <script src="assets/js/particles.js"></script>
+    <script src="assets/js/dinosaur-game.js"></script>
 </body>
 </html>
