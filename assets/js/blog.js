@@ -65,53 +65,21 @@
   // Markdown转HTML
   function markdownToHtml(markdown) {
     if (typeof marked === 'undefined') {
-      // 如果marked库未加载，使用增强的基础解析器
-      return basicMarkdownToHtml(markdown);
+      // 如果marked库未加载，使用简单的替换
+      return markdown
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/[\r\n]+/g, '<br />');
     }
     return marked.parse(markdown);
-  }
-
-  // 增强的基础Markdown解析器
-  function basicMarkdownToHtml(markdown) {
-    let html = markdown;
-    
-    // 处理代码块 (``code```)
-    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    
-    // 处理行内代码 (`code`)
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    
-    // 处理图片 (![alt](src))
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2" />');
-    
-    // 处理链接 ([text](url))
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-    
-    // 处理标题 (# Header)
-    html = html.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
-    html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
-    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-    
-    // 处理粗体和斜体
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // 处理引用
-    html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
-    
-    // 处理无序列表
-    html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
-    
-    // 处理段落
-    html = html.replace(/^\s*(\w[\s\S]*?)(?=(\n\s*\n|$))/gim, '<p>$1</p>');
-    
-    // 处理换行
-    html = html.replace(/\n/g, '<br />');
-    
-    return html;
   }
   
   // 单元格相关函数
@@ -474,46 +442,9 @@
         <section class="post-content">${post.content || ''}</section>
         <footer style="margin-top:1rem">
           <a href="blog.html" class="read-more">← 返回文章列表</a>
-          <button id="deletePostBtn" class="cta-button" style="margin-left: 1rem; background-color: #e74c3c; border: none;">删除文章</button>
         </footer>
       </article>
     `;
-    
-    // 添加删除文章功能
-    const deleteBtn = document.getElementById('deletePostBtn');
-    if (deleteBtn) {
-      deleteBtn.addEventListener('click', async () => {
-        // 添加密码验证保护
-        const password = prompt('请输入管理员密码以删除文章:');
-        if (!password) return; // 用户取消输入
-        
-        // 验证密码 (密码: qweasd123)
-        if (password !== 'qweasd123') {
-          alert('密码错误，无法删除文章。');
-          return;
-        }
-        
-        if (confirm(`确定要删除文章"${post.title}"吗？此操作不可撤销。`)) {
-          try {
-            // 从文章列表中过滤掉当前文章
-            const updatedPosts = posts.filter(p => p.slug !== slug);
-            
-            // 保存更新后的文章列表
-            const saved = await savePosts(updatedPosts);
-            if (saved) {
-              alert('文章删除成功！');
-              // 跳转到博客列表页面
-              window.location.href = 'blog.html';
-            } else {
-              alert('删除失败，请重试。');
-            }
-          } catch (error) {
-            console.error('删除文章时出错:', error);
-            alert('删除文章时发生错误，请重试。');
-          }
-        }
-      });
-    }
     // 如果 post.content 是 markdown 而不是 HTML，可在此加入简单的解析器或引用第三方库。
   }
 
