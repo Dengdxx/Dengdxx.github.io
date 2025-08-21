@@ -919,7 +919,7 @@
     if (!slug) {
       container.innerHTML = `
         <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
-          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem; display: none;">管理模式</button>
         </div>
         <p>缺少文章标识（post 参数）。返回 <a href="blog.html">文章列表</a>。</p>
       `;
@@ -931,7 +931,7 @@
     if (!post) {
       container.innerHTML = `
         <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
-          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem; display: none;">管理模式</button>
         </div>
         <p>未找到文章 '${escapeHtml(slug)}'。返回 <a href="blog.html">文章列表</a>。</p>
       `;
@@ -942,7 +942,7 @@
     const tagsHtml = (post.tags || []).map(t => `<a class="tag" href="blog.html?tag=${encodeURIComponent(t)}">${t}</a>`).join(' ');
     container.innerHTML = `
       <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
-        <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+        <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem; display: none;">管理模式</button>
       </div>
       <article class="glass-card">
         <header class="post-header">
