@@ -20,16 +20,6 @@
   <img src="docs/images/homepage-light.png" alt="浅色主题主页" width="800">
 </div>
 
-### 📝 博客系统
-<div>
-  <img src="docs/images/blog-page.png" alt="博客页面" width="800">
-</div>
-
-### 📱 移动端适配
-<div>
-  <img src="docs/images/homepage-mobile.png" alt="移动端显示" width="300">
-</div>
-
 ## 🚀 特性
 
 ### 🏠 主页功能
@@ -243,7 +233,7 @@ serve .
 
 
 | 平台 | 链接 |
-|------|------|------|
+|------|------|
 | 📧 **邮箱** | [dengdx@tju.edu.cn](mailto:dengdx@tju.edu.cn) 
 | 💻 **GitHub** | [https://github.com/Dengdxx](https://github.com/Dengdxx) 
 | 🏠 **个人网站** | [https://dengdxx.github.io/](https://dengdxx.github.io/) 
