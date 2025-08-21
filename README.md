@@ -1,4 +1,4 @@
-# DX 的个人主页 🤖
+# DX 的个人主页 
 
 ![License](https://img.shields.io/github/license/Dengdxx/Dengdxx.github.io)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
@@ -7,9 +7,9 @@
 
 
 ---
+---
 
-
-## ✨ 预览
+## ✨ 效果预览
 
 ### 🌙 深色主题
 <div>
