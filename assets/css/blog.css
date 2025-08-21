@@ -17,6 +17,7 @@
   overflow-x: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  text-align: left;
 }
 
 .post-content h1,
