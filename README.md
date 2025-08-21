@@ -9,16 +9,6 @@
 ---
 ---
 
-## ✨ 效果预览
-
-### 🌙 深色主题
-<div>
-  <img src="docs/images/homepage-dark.png" alt="深色主题主页" width="800">
-
-### ☀️ 浅色主题
-<div>
-  <img src="docs/images/homepage-light.png" alt="浅色主题主页" width="800">
-</div>
 
 ## 🚀 特性
 
@@ -63,6 +53,18 @@
 - 📱 **PWA 就绪** - 支持离线访问和移动端安装
 - ⚡ **性能优化** - 懒加载、代码分割、资源压缩
 - 🌐 **SEO 友好** - 完整的 meta 标签和语义化 HTML
+
+## ✨ 效果预览
+
+### 🌙 深色主题
+<div>
+  <img src="docs/images/homepage-dark.png" alt="深色主题主页" width="800">
+
+### ☀️ 浅色主题
+<div>
+  <img src="docs/images/homepage-light.png" alt="浅色主题主页" width="800">
+</div>
+
 
 ## 🛠️ 技术栈
 
