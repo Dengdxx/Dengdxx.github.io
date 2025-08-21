@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>博客 - Deng DX</title>
+    <meta name="description" content="Deng DX 的博客，分享机器人与 AI 技术心得" />
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxNiIgY3k9IjE2IiByPSIxNiIgZmlsbD0iI0Q1RDVENSIvPjwvc3ZnPg==" />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/blog.css" />
+</head>
+<body data-theme="dark">
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <!-- 复用主页的导航结构 -->
+    <nav class="main-nav" role="navigation" aria-label="主导航">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand" aria-label="DX机器人开发者主页">
+                <span class="brand-logo" aria-hidden="true">DX</span>
+                <span class="brand-name">Deng DX</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html#projects" class="nav-link">项目</a>
+                <a href="index.html#skills" class="nav-link">技能</a>
+                <a href="index.html#contact" class="nav-link">联系</a>
+                <a href="blog.html" class="nav-link active">博客</a>
+                <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="切换深色/浅色主题">🌚</button>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开导航菜单" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main id="main-content" class="container blog-container">
+        <header class="blog-header">
+            <h1>博客</h1>
+            <p class="tagline">记录机器人、人工智能与开发心得</p>
+
+            <div class="blog-controls">
+                <input id="searchInput" type="search" placeholder="搜索标题、标签或内容..." aria-label="搜索文章" />
+                <div id="tagFilters" class="tag-filters" aria-hidden="false"></div>
+            </div>
+        </header>
+
+        <section id="postsList" class="posts-grid" aria-live="polite">
+            <!-- JS 会在这里渲染文章卡片 -->
+        </section>
+
+        <nav id="pagination" class="pagination" aria-label="文章分页">
+            <!-- JS 渲染分页 -->
+        </nav>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 DX. 保留所有权利.</p>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/blog.js"></script>
+</body>
+</html>
