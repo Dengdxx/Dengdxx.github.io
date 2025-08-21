@@ -54,6 +54,64 @@
     return await loadPosts();
   }
 
+  // Global functions for admin operations
+  let showEditForm, handleEditSubmit;
+  
+  // Admin mode state
+  let isAdminMode = false;
+  const ADMIN_PASSWORD = 'qweasd123';
+
+  // Admin mode toggle functionality
+  function toggleAdminMode() {
+    if (!isAdminMode) {
+      // 尝试进入管理员模式
+      const password = prompt('请输入管理员密码以进入管理模式:');
+      if (!password) return;
+      
+      if (password !== ADMIN_PASSWORD) {
+        alert('密码错误，无法进入管理模式。');
+        return;
+      }
+      
+      // 进入管理员模式
+      isAdminMode = true;
+      document.body.classList.add('admin-mode');
+      const adminToggle = document.getElementById('adminToggle');
+      if (adminToggle) {
+        adminToggle.textContent = '退出管理';
+        adminToggle.style.backgroundColor = '#e74c3c';
+      }
+      
+      alert('已进入管理员模式');
+    } else {
+      // 退出管理员模式
+      isAdminMode = false;
+      document.body.classList.remove('admin-mode');
+      const adminToggle = document.getElementById('adminToggle');
+      if (adminToggle) {
+        adminToggle.textContent = '管理模式';
+        adminToggle.style.backgroundColor = '#2c3e50';
+      }
+      
+      // 隐藏创建文章表单
+      const createPostForm = qs('#createPostForm');
+      const createPostBtn = qs('#createPostBtn');
+      if (createPostForm && createPostBtn) {
+        createPostForm.style.display = 'none';
+        createPostBtn.style.display = 'block';
+      }
+    }
+  }
+
+  // 验证管理员权限
+  function verifyAdminAccess(operation) {
+    if (!isAdminMode) {
+      alert('请先进入管理员模式才能执行此操作。');
+      return false;
+    }
+    return true;
+  }
+
   // 生成文章slug
   function generateSlug(title) {
     // 如果包含中文字符，直接使用encodeURIComponent
@@ -288,10 +346,27 @@
           </div>
           <div>
             <div class="post-tags">${tagsHtml}</div>
-            <a class="read-more" href="post.html?post=${encodeURIComponent(p.slug)}">阅读全文 →</a>
+            <div class="card-actions">
+              <a class="read-more" href="post.html?post=${encodeURIComponent(p.slug)}">阅读全文 →</a>
+              <button class="admin-button cta-button blog-button edit-post-btn" data-slug="${p.slug}" style="margin-left: 0.5rem; padding: 0.3rem 0.6rem; font-size: 0.85rem;">编辑</button>
+            </div>
           </div>
         `;
         postsListEl.appendChild(card);
+      });
+      
+      // 为编辑按钮添加事件监听器
+      qsa('.edit-post-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (!verifyAdminAccess('编辑')) return;
+          
+          const slug = btn.dataset.slug;
+          const post = items.find(p => p.slug === slug);
+          if (post) {
+            showEditForm(post);
+          }
+        });
       });
     }
 
@@ -315,11 +390,237 @@
     const cellsContainer = qs('#cellsContainer');
     const addTextCellBtn = qs('#addTextCell');
     const addCodeCellBtn = qs('#addCodeCell');
+    const adminToggle = qs('#adminToggle');
+
+    // 管理员模式切换
+    if (adminToggle) {
+      adminToggle.addEventListener('click', toggleAdminMode);
+    }
+
+    // 编辑文章功能
+    showEditForm = function(post) {
+      // 创建编辑表单（如果不存在）
+      let editForm = qs('#editPostForm');
+      if (!editForm) {
+        editForm = document.createElement('section');
+        editForm.id = 'editPostForm';
+        editForm.className = 'glass-card admin-button';
+        editForm.style.display = 'none';
+        editForm.style.marginBottom = '2rem';
+        
+        editForm.innerHTML = `
+          <h2>编辑文章</h2>
+          <form id="editForm">
+            <input type="hidden" id="editPostSlug" />
+            <div class="form-group">
+              <label for="editPostTitle">标题</label>
+              <input type="text" id="editPostTitle" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="editPostTags">标签（用逗号分隔）</label>
+              <input type="text" id="editPostTags" class="form-control" placeholder="例如: 机器人, AI, 教程">
+            </div>
+            
+            <div class="form-group">
+              <label for="editPostExcerpt">摘要</label>
+              <textarea id="editPostExcerpt" class="form-control" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label>内容 (单元格结构)</label>
+              <div id="editCellsContainer">
+                <!-- 单元格将在这里动态添加 -->
+              </div>
+              <div class="cell-actions">
+                <button type="button" id="editAddTextCell" class="cta-button blog-button">添加文本单元格</button>
+                <button type="button" id="editAddCodeCell" class="cta-button blog-button">添加代码单元格</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="editPostReadTime">阅读时间</label>
+              <input type="text" id="editPostReadTime" class="form-control" placeholder="例如: 约 3 分钟">
+            </div>
+            
+            <div class="form-buttons">
+              <button type="submit" class="cta-button">更新文章</button>
+              <button type="button" id="cancelEditBtn" class="cta-button blog-button">取消</button>
+            </div>
+          </form>
+        `;
+        
+        createPostForm.parentNode.insertBefore(editForm, createPostForm.nextSibling);
+        
+        // 为编辑表单添加事件监听器
+        const editFormEl = qs('#editForm', editForm);
+        const cancelEditBtn = qs('#cancelEditBtn', editForm);
+        const editCellsContainer = qs('#editCellsContainer', editForm);
+        const editAddTextCellBtn = qs('#editAddTextCell', editForm);
+        const editAddCodeCellBtn = qs('#editAddCodeCell', editForm);
+
+        if (cancelEditBtn) {
+          cancelEditBtn.addEventListener('click', () => {
+            editForm.style.display = 'none';
+            editFormEl.reset();
+            editCellsContainer.innerHTML = '';
+          });
+        }
+
+        if (editAddTextCellBtn) {
+          editAddTextCellBtn.addEventListener('click', () => {
+            const textCell = createTextCell();
+            editCellsContainer.appendChild(textCell);
+            attachCellEventListeners(textCell);
+          });
+        }
+
+        if (editAddCodeCellBtn) {
+          editAddCodeCellBtn.addEventListener('click', () => {
+            const codeCell = createCodeCell();
+            editCellsContainer.appendChild(codeCell);
+            attachCellEventListeners(codeCell);
+          });
+        }
+
+        if (editFormEl) {
+          editFormEl.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await handleEditSubmit(e);
+          });
+        }
+      }
+      
+      // 填充表单数据
+      qs('#editPostSlug').value = post.slug;
+      qs('#editPostTitle').value = post.title;
+      qs('#editPostTags').value = (post.tags || []).join(', ');
+      qs('#editPostExcerpt').value = post.excerpt || '';
+      qs('#editPostReadTime').value = post.readTime || '';
+      
+      // 解析现有内容到单元格
+      const editCellsContainer = qs('#editCellsContainer');
+      editCellsContainer.innerHTML = '';
+      
+      // 简单的内容解析 - 假设内容是HTML格式
+      if (post.content) {
+        // 创建一个文本单元格包含所有内容
+        const textCell = createTextCell(post.content);
+        editCellsContainer.appendChild(textCell);
+        attachCellEventListeners(textCell);
+      }
+      
+      editForm.style.display = 'block';
+      createPostForm.style.display = 'none';
+      editForm.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    handleEditSubmit = async function(e) {
+      const editFormEl = e.target;
+      const originalSlug = qs('#editPostSlug').value;
+      const title = qs('#editPostTitle').value.trim();
+      const tags = qs('#editPostTags').value.split(',').map(t => t.trim()).filter(t => t);
+      const excerpt = qs('#editPostExcerpt').value.trim();
+      const readTime = qs('#editPostReadTime').value.trim();
+
+      if (!title) {
+        alert('标题不能为空');
+        return;
+      }
+
+      // 获取所有单元格内容
+      const cells = qsa('.cell', qs('#editCellsContainer'));
+      if (cells.length === 0) {
+        alert('请至少添加一个内容单元格');
+        return;
+      }
+
+      // 构建文章内容
+      let content = '';
+      cells.forEach(cell => {
+        const type = cell.dataset.type;
+        const textarea = qs('textarea', cell);
+        const cellContent = textarea ? textarea.value.trim() : '';
+        
+        if (cellContent) {
+          if (type === 'text') {
+            content += renderCellContent(cellContent, 'text') + '\n';
+          } else if (type === 'code') {
+            content += renderCellContent(cellContent, 'code') + '\n';
+          }
+        }
+      });
+
+      if (!content) {
+        alert('文章内容不能为空');
+        return;
+      }
+
+      try {
+        // 获取当前文章列表
+        const currentPosts = await getPosts();
+        
+        // 找到并更新文章
+        const postIndex = currentPosts.findIndex(p => p.slug === originalSlug);
+        if (postIndex === -1) {
+          alert('未找到要编辑的文章');
+          return;
+        }
+
+        // 更新文章对象
+        const updatedPost = {
+          ...currentPosts[postIndex],
+          title,
+          slug: generateSlug(title), // 重新生成slug以防标题改变
+          tags,
+          excerpt,
+          readTime: readTime || '约 1 分钟',
+          content: content,
+          date: currentPosts[postIndex].date // 保持原创建日期
+        };
+
+        // 如果slug改变了，需要处理
+        if (updatedPost.slug !== originalSlug) {
+          // 可能需要更新URL引用，但这里简化处理
+          console.warn('文章slug已改变，从', originalSlug, '到', updatedPost.slug);
+        }
+
+        // 替换文章
+        currentPosts[postIndex] = updatedPost;
+
+        // 保存文章
+        const saved = await savePosts(currentPosts);
+        if (saved) {
+          // 重置表单
+          editFormEl.reset();
+          qs('#editPostForm').style.display = 'none';
+          qs('#editCellsContainer').innerHTML = '';
+          
+          // 更新页面
+          state.page = 1;
+          update();
+          
+          alert('文章更新成功！');
+        } else {
+          alert('文章保存失败，请重试');
+        }
+      } catch (error) {
+        console.error('更新文章时出错:', error);
+        alert('更新文章时发生错误，请重试');
+      }
+    };
 
     if (createPostBtn && createPostForm && postForm) {
       createPostBtn.addEventListener('click', () => {
+        if (!verifyAdminAccess('创建文章')) return;
+        
         createPostForm.style.display = 'block';
         createPostBtn.style.display = 'none';
+        // 隐藏编辑表单（如果存在）
+        const editForm = qs('#editPostForm');
+        if (editForm) {
+          editForm.style.display = 'none';
+        }
       });
 
       cancelPostBtn.addEventListener('click', () => {
@@ -436,15 +737,7 @@
       postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // 添加密码验证保护
-        const password = prompt('请输入管理员密码以创建文章:');
-        if (!password) return; // 用户取消输入
-        
-        // 验证密码 (密码: qweasd123)
-        if (password !== 'qweasd123') {
-          alert('密码错误，无法创建文章。');
-          return;
-        }
+        if (!verifyAdminAccess('创建文章')) return;
 
         // 获取表单数据
         const title = qs('#postTitle').value.trim();
@@ -624,18 +917,33 @@
     const container = document.querySelector('.post-container');
     if (!container) return;
     if (!slug) {
-      container.innerHTML = `<p>缺少文章标识（post 参数）。返回 <a href="blog.html">文章列表</a>。</p>`;
+      container.innerHTML = `
+        <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
+          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+        </div>
+        <p>缺少文章标识（post 参数）。返回 <a href="blog.html">文章列表</a>。</p>
+      `;
       return;
     }
+    
     const posts = await getPosts();
     const post = posts.find(p => p.slug === slug);
     if (!post) {
-      container.innerHTML = `<p>未找到文章 '${escapeHtml(slug)}'。返回 <a href="blog.html">文章列表</a>。</p>`;
+      container.innerHTML = `
+        <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
+          <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+        </div>
+        <p>未找到文章 '${escapeHtml(slug)}'。返回 <a href="blog.html">文章列表</a>。</p>
+      `;
       return;
     }
+    
     document.title = `${post.title} - Deng DX`;
     const tagsHtml = (post.tags || []).map(t => `<a class="tag" href="blog.html?tag=${encodeURIComponent(t)}">${t}</a>`).join(' ');
     container.innerHTML = `
+      <div class="admin-controls" style="text-align: center; margin-bottom: 1rem;">
+        <button id="adminToggle" class="cta-button blog-button" style="background-color: #2c3e50; margin-bottom: 1rem;">管理模式</button>
+      </div>
       <article class="glass-card">
         <header class="post-header">
           <h1>${escapeHtml(post.title)}</h1>
@@ -645,10 +953,17 @@
         <section class="post-content">${post.content || ''}</section>
         <footer style="margin-top:1rem">
           <a href="blog.html" class="read-more">← 返回文章列表</a>
-          <button id="deletePostBtn" class="cta-button" style="margin-left: 1rem; background-color: #e74c3c; border: none;">删除文章</button>
+          <button id="editPostBtn" class="cta-button admin-button" style="margin-left: 1rem; background-color: #3498db; border: none;">编辑文章</button>
+          <button id="deletePostBtn" class="cta-button admin-button" style="margin-left: 1rem; background-color: #e74c3c; border: none;">删除文章</button>
         </footer>
       </article>
     `;
+    
+    // 设置管理员模式切换
+    const adminToggle = document.getElementById('adminToggle');
+    if (adminToggle) {
+      adminToggle.addEventListener('click', toggleAdminMode);
+    }
     
     // 触发 MathJax 渲染
     if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
@@ -661,19 +976,21 @@
     // 为代码块添加复制按钮
     addCopyButtonsToCodeBlocks();
     
+    // 添加编辑文章功能
+    const editBtn = document.getElementById('editPostBtn');
+    if (editBtn) {
+      editBtn.addEventListener('click', () => {
+        if (!verifyAdminAccess('编辑文章')) return;
+        // 跳转到博客页面并触发编辑
+        window.location.href = `blog.html?edit=${encodeURIComponent(slug)}`;
+      });
+    }
+    
     // 添加删除文章功能
     const deleteBtn = document.getElementById('deletePostBtn');
     if (deleteBtn) {
       deleteBtn.addEventListener('click', async () => {
-        // 添加密码验证保护
-        const password = prompt('请输入管理员密码以删除文章:');
-        if (!password) return; // 用户取消输入
-        
-        // 验证密码 (密码: qweasd123)
-        if (password !== 'qweasd123') {
-          alert('密码错误，无法删除文章。');
-          return;
-        }
+        if (!verifyAdminAccess('删除文章')) return;
         
         if (confirm(`确定要删除文章"${post.title}"吗？此操作不可撤销。`)) {
           try {
@@ -727,6 +1044,39 @@
       if (urlTag) {
         const tagBtn = document.querySelector(`.tag[data-tag="${urlTag}"]`);
         if (tagBtn) tagBtn.click();
+      }
+      
+      // 支持通过 URL ?edit=slug 直接编辑文章
+      const editSlug = new URLSearchParams(location.search).get('edit');
+      if (editSlug) {
+        // 需要先进入管理员模式，然后找到文章并开始编辑
+        setTimeout(async () => {
+          const password = prompt('请输入管理员密码以编辑文章:');
+          if (!password) return;
+          
+          if (password !== ADMIN_PASSWORD) {
+            alert('密码错误，无法编辑文章。');
+            return;
+          }
+          
+          // 进入管理员模式
+          isAdminMode = true;
+          document.body.classList.add('admin-mode');
+          const adminToggle = document.getElementById('adminToggle');
+          if (adminToggle) {
+            adminToggle.textContent = '退出管理';
+            adminToggle.style.backgroundColor = '#e74c3c';
+          }
+          
+          // 查找文章并显示编辑表单
+          const posts = await getPosts();
+          const post = posts.find(p => p.slug === editSlug);
+          if (post) {
+            showEditForm(post);
+          } else {
+            alert('未找到要编辑的文章');
+          }
+        }, 100);
       }
     } else if (document.querySelector('.post-container')) {
       renderPostPage();
