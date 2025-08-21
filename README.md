@@ -90,5 +90,5 @@ npx http-server
 
 ## 联系方式
 
-- 邮箱：[你的邮箱]
+- 邮箱：dengdx@tju.edu.cn
 - GitHub：[https://github.com/Dengdxx](https://github.com/Dengdxx)
