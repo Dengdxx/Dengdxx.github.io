@@ -161,6 +161,7 @@
       <div class="cell-header">
         <div class="cell-type">文本单元格</div>
         <div class="cell-actions">
+          <button type="button" class="preview-cell" title="预览渲染">👁️</button>
           <button type="button" class="move-up" title="上移">↑</button>
           <button type="button" class="move-down" title="下移">↓</button>
           <button type="button" class="delete-cell" title="删除">✕</button>
@@ -168,6 +169,7 @@
       </div>
       <div class="cell-content">
         <textarea placeholder="在此输入Markdown文本...">${content}</textarea>
+        <div class="cell-preview" style="display: none;"></div>
       </div>
     `;
     return cell;
@@ -183,6 +185,7 @@
       <div class="cell-header">
         <div class="cell-type">代码单元格</div>
         <div class="cell-actions">
+          <button type="button" class="preview-cell" title="预览渲染">👁️</button>
           <button type="button" class="move-up" title="上移">↑</button>
           <button type="button" class="move-down" title="下移">↓</button>
           <button type="button" class="delete-cell" title="删除">✕</button>
@@ -190,6 +193,7 @@
       </div>
       <div class="cell-content">
         <textarea placeholder="在此输入代码...">${content}</textarea>
+        <div class="cell-preview" style="display: none;"></div>
       </div>
     `;
     return cell;
@@ -346,7 +350,9 @@
         const deleteBtn = qs('.delete-cell', cell);
         const moveUpBtn = qs('.move-up', cell);
         const moveDownBtn = qs('.move-down', cell);
+        const previewBtn = qs('.preview-cell', cell);
         const textarea = qs('textarea', cell);
+        const preview = qs('.cell-preview', cell);
 
         if (deleteBtn) {
           deleteBtn.addEventListener('click', () => {
@@ -368,6 +374,46 @@
             const next = cell.nextElementSibling;
             if (next) {
               cell.parentNode.insertBefore(next, cell);
+            }
+          });
+        }
+
+        // 添加预览功能
+        if (previewBtn && textarea && preview) {
+          let isPreviewMode = false;
+          
+          previewBtn.addEventListener('click', () => {
+            if (!isPreviewMode) {
+              // 切换到预览模式
+              const content = textarea.value;
+              const cellType = cell.dataset.type;
+              const renderedContent = renderCellContent(content, cellType);
+              
+              preview.innerHTML = renderedContent;
+              preview.style.display = 'block';
+              textarea.style.display = 'none';
+              
+              previewBtn.textContent = '📝';
+              previewBtn.title = '编辑模式';
+              isPreviewMode = true;
+              
+              // 为代码块添加复制按钮（如果是文本单元格且包含代码块）
+              if (cellType === 'text') {
+                addCopyButtonsToCodeBlocks();
+              }
+              
+              // 触发 MathJax 渲染（如果可用）
+              if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([preview]);
+              }
+            } else {
+              // 切换回编辑模式
+              preview.style.display = 'none';
+              textarea.style.display = 'block';
+              
+              previewBtn.textContent = '👁️';
+              previewBtn.title = '预览渲染';
+              isPreviewMode = false;
             }
           });
         }
@@ -492,6 +538,85 @@
     update();
   }
 
+  // 为代码块添加复制按钮
+  function addCopyButtonsToCodeBlocks() {
+    const codeBlocks = document.querySelectorAll('pre code');
+    codeBlocks.forEach((codeBlock, index) => {
+      const pre = codeBlock.parentElement;
+      
+      // 避免重复添加按钮
+      if (pre.querySelector('.copy-button')) return;
+      
+      // 创建复制按钮
+      const copyButton = document.createElement('button');
+      copyButton.className = 'copy-button';
+      copyButton.textContent = '复制';
+      copyButton.title = '复制代码到剪贴板';
+      
+      // 为按钮添加样式
+      Object.assign(copyButton.style, {
+        position: 'absolute',
+        top: '8px',
+        right: '8px',
+        padding: '4px 8px',
+        fontSize: '12px',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        color: 'inherit',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease',
+        zIndex: '10'
+      });
+      
+      // 设置pre元素为相对定位以便按钮绝对定位
+      pre.style.position = 'relative';
+      
+      // 添加点击事件
+      copyButton.addEventListener('click', async () => {
+        try {
+          const text = codeBlock.textContent;
+          await navigator.clipboard.writeText(text);
+          
+          // 临时改变按钮文本以显示成功状态
+          const originalText = copyButton.textContent;
+          copyButton.textContent = '已复制!';
+          copyButton.style.backgroundColor = 'rgba(0, 255, 0, 0.2)';
+          
+          setTimeout(() => {
+            copyButton.textContent = originalText;
+            copyButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+          }, 2000);
+        } catch (err) {
+          console.error('复制失败:', err);
+          // 备用方案：创建临时textarea并复制
+          const textarea = document.createElement('textarea');
+          textarea.value = codeBlock.textContent;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          
+          copyButton.textContent = '已复制!';
+          setTimeout(() => {
+            copyButton.textContent = '复制';
+          }, 2000);
+        }
+      });
+      
+      // 鼠标悬停效果
+      copyButton.addEventListener('mouseenter', () => {
+        copyButton.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+      });
+      
+      copyButton.addEventListener('mouseleave', () => {
+        copyButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+      });
+      
+      pre.appendChild(copyButton);
+    });
+  }
+
   // ----------------- 单篇页逻辑 -----------------
   async function renderPostPage() {
     const params = new URLSearchParams(location.search);
@@ -532,6 +657,9 @@
       // 对于 MathJax v2
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
     }
+    
+    // 为代码块添加复制按钮
+    addCopyButtonsToCodeBlocks();
     
     // 添加删除文章功能
     const deleteBtn = document.getElementById('deletePostBtn');
