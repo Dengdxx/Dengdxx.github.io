@@ -43,7 +43,52 @@
                 <input id="searchInput" type="search" placeholder="搜索标题、标签或内容..." aria-label="搜索文章" />
                 <div id="tagFilters" class="tag-filters" aria-hidden="false"></div>
             </div>
+            
+            <!-- 添加创建文章按钮 -->
+            <button id="createPostBtn" class="cta-button">创建新文章</button>
         </header>
+
+        <!-- 创建文章表单 -->
+        <section id="createPostForm" class="glass-card" style="display: none; margin-bottom: 2rem;">
+            <h2>创建新文章</h2>
+            <form id="postForm">
+                <div class="form-group">
+                    <label for="postTitle">标题</label>
+                    <input type="text" id="postTitle" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postTags">标签（用逗号分隔）</label>
+                    <input type="text" id="postTags" class="form-control" placeholder="例如: 机器人, AI, 教程">
+                </div>
+                
+                <div class="form-group">
+                    <label for="postExcerpt">摘要</label>
+                    <textarea id="postExcerpt" class="form-control" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>内容 (单元格结构)</label>
+                    <div id="cellsContainer">
+                        <!-- 单元格将在这里动态添加 -->
+                    </div>
+                    <div class="cell-actions">
+                        <button type="button" id="addTextCell" class="cta-button blog-button">添加文本单元格</button>
+                        <button type="button" id="addCodeCell" class="cta-button blog-button">添加代码单元格</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="postReadTime">阅读时间</label>
+                    <input type="text" id="postReadTime" class="form-control" placeholder="例如: 约 3 分钟">
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="cta-button">发布文章</button>
+                    <button type="button" id="cancelPostBtn" class="cta-button blog-button">取消</button>
+                </div>
+            </form>
+        </section>
 
         <section id="postsList" class="posts-grid" aria-live="polite">
             <!-- JS 会在这里渲染文章卡片 -->
@@ -59,6 +104,7 @@
     </footer>
 
     <script src="assets/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="assets/js/blog.js"></script>
 </body>
 </html>

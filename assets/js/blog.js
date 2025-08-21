@@ -24,9 +24,121 @@
     }
   }
 
+  // 保存文章到localStorage（由于静态网站限制，实际项目中需要后端支持）
+  async function savePosts(posts) {
+    try {
+      // 在真实环境中，这里应该发送请求到后端API
+      localStorage.setItem('blogPosts', JSON.stringify(posts));
+      return true;
+    } catch (e) {
+      console.error('保存文章失败:', e);
+      return false;
+    }
+  }
+
+  // 获取文章数据（优先从localStorage获取）
+  async function getPosts() {
+    // 检查localStorage中是否有文章数据
+    const localPosts = localStorage.getItem('blogPosts');
+    if (localPosts) {
+      try {
+        const posts = JSON.parse(localPosts);
+        posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+        return posts;
+      } catch (e) {
+        console.error('解析本地文章数据失败:', e);
+      }
+    }
+    
+    // 如果localStorage中没有，则从默认文件获取
+    return await loadPosts();
+  }
+
+  // 生成文章slug
+  function generateSlug(title) {
+    return title.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  // Markdown转HTML
+  function markdownToHtml(markdown) {
+    if (typeof marked === 'undefined') {
+      // 如果marked库未加载，使用简单的替换
+      return markdown
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/!\[(.*?)\]\((.*?)\)/g, '<img alt="$1" src="$2" />')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/[\r\n]+/g, '<br />');
+    }
+    return marked.parse(markdown);
+  }
+  
+  // 单元格相关函数
+  function createTextCell(content = '') {
+    const cellId = 'cell-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.type = 'text';
+    cell.dataset.id = cellId;
+    cell.innerHTML = `
+      <div class="cell-header">
+        <div class="cell-type">文本单元格</div>
+        <div class="cell-actions">
+          <button type="button" class="move-up" title="上移">↑</button>
+          <button type="button" class="move-down" title="下移">↓</button>
+          <button type="button" class="delete-cell" title="删除">✕</button>
+        </div>
+      </div>
+      <div class="cell-content">
+        <textarea placeholder="在此输入Markdown文本...">${content}</textarea>
+      </div>
+    `;
+    return cell;
+  }
+
+  function createCodeCell(content = '') {
+    const cellId = 'cell-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.type = 'code';
+    cell.dataset.id = cellId;
+    cell.innerHTML = `
+      <div class="cell-header">
+        <div class="cell-type">代码单元格</div>
+        <div class="cell-actions">
+          <button type="button" class="move-up" title="上移">↑</button>
+          <button type="button" class="move-down" title="下移">↓</button>
+          <button type="button" class="delete-cell" title="删除">✕</button>
+        </div>
+      </div>
+      <div class="cell-content">
+        <textarea placeholder="在此输入代码...">${content}</textarea>
+      </div>
+    `;
+    return cell;
+  }
+
+  function renderCellContent(content, type) {
+    if (type === 'text') {
+      return markdownToHtml(content);
+    } else if (type === 'code') {
+      return `<pre><code>${escapeHtml(content)}</code></pre>`;
+    }
+    return escapeHtml(content);
+  }
+
   // ----------------- 列表页逻辑 -----------------
   async function renderListPage() {
-    const posts = await loadPosts();
+    const posts = await getPosts();
     const postsListEl = qs('#postsList');
     const searchInput = qs('#searchInput');
     const tagFiltersEl = qs('#tagFilters');
@@ -123,6 +235,166 @@
       });
     }
 
+    // 添加创建文章功能
+    const createPostBtn = qs('#createPostBtn');
+    const createPostForm = qs('#createPostForm');
+    const postForm = qs('#postForm');
+    const cancelPostBtn = qs('#cancelPostBtn');
+    const cellsContainer = qs('#cellsContainer');
+    const addTextCellBtn = qs('#addTextCell');
+    const addCodeCellBtn = qs('#addCodeCell');
+
+    if (createPostBtn && createPostForm && postForm) {
+      createPostBtn.addEventListener('click', () => {
+        createPostForm.style.display = 'block';
+        createPostBtn.style.display = 'none';
+      });
+
+      cancelPostBtn.addEventListener('click', () => {
+        createPostForm.style.display = 'none';
+        createPostBtn.style.display = 'block';
+        postForm.reset();
+        // 清空单元格容器
+        cellsContainer.innerHTML = '';
+      });
+
+      // 添加单元格功能
+      if (addTextCellBtn && addCodeCellBtn && cellsContainer) {
+        addTextCellBtn.addEventListener('click', () => {
+          const textCell = createTextCell();
+          cellsContainer.appendChild(textCell);
+          attachCellEventListeners(textCell);
+        });
+
+        addCodeCellBtn.addEventListener('click', () => {
+          const codeCell = createCodeCell();
+          cellsContainer.appendChild(codeCell);
+          attachCellEventListeners(codeCell);
+        });
+      }
+
+      // 为单元格添加事件监听器
+      function attachCellEventListeners(cell) {
+        const deleteBtn = qs('.delete-cell', cell);
+        const moveUpBtn = qs('.move-up', cell);
+        const moveDownBtn = qs('.move-down', cell);
+        const textarea = qs('textarea', cell);
+
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => {
+            cell.remove();
+          });
+        }
+
+        if (moveUpBtn) {
+          moveUpBtn.addEventListener('click', () => {
+            const prev = cell.previousElementSibling;
+            if (prev) {
+              cell.parentNode.insertBefore(cell, prev);
+            }
+          });
+        }
+
+        if (moveDownBtn) {
+          moveDownBtn.addEventListener('click', () => {
+            const next = cell.nextElementSibling;
+            if (next) {
+              cell.parentNode.insertBefore(next, cell);
+            }
+          });
+        }
+
+        // 自动调整textarea高度
+        if (textarea) {
+          textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+          });
+          
+          // 初始化时调整高度
+          setTimeout(() => {
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+          }, 0);
+        }
+      }
+
+      postForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // 获取表单数据
+        const title = qs('#postTitle').value.trim();
+        const tags = qs('#postTags').value.split(',').map(t => t.trim()).filter(t => t);
+        const excerpt = qs('#postExcerpt').value.trim();
+        const readTime = qs('#postReadTime').value.trim();
+
+        if (!title) {
+          alert('标题不能为空');
+          return;
+        }
+
+        // 获取所有单元格内容
+        const cells = qsa('.cell', cellsContainer);
+        if (cells.length === 0) {
+          alert('请至少添加一个内容单元格');
+          return;
+        }
+
+        // 构建文章内容
+        let content = '';
+        cells.forEach(cell => {
+          const type = cell.dataset.type;
+          const textarea = qs('textarea', cell);
+          const cellContent = textarea ? textarea.value.trim() : '';
+          
+          if (cellContent) {
+            if (type === 'text') {
+              content += renderCellContent(cellContent, 'text') + '\n';
+            } else if (type === 'code') {
+              content += renderCellContent(cellContent, 'code') + '\n';
+            }
+          }
+        });
+
+        if (!content) {
+          alert('文章内容不能为空');
+          return;
+        }
+
+        // 创建新文章对象
+        const newPost = {
+          title,
+          slug: generateSlug(title),
+          date: new Date().toISOString().split('T')[0],
+          tags,
+          excerpt,
+          readTime: readTime || '约 1 分钟',
+          content: content
+        };
+
+        // 添加到文章列表
+        const updatedPosts = [newPost, ...posts];
+
+        // 保存文章
+        const saved = await savePosts(updatedPosts);
+        if (saved) {
+          // 重置表单
+          postForm.reset();
+          createPostForm.style.display = 'none';
+          createPostBtn.style.display = 'block';
+          cellsContainer.innerHTML = ''; // 清空单元格
+          
+          // 更新页面
+          state.page = 1;
+          update();
+          
+          alert('文章创建成功！');
+        } else {
+          alert('文章保存失败，请重试');
+        }
+      });
+    }
+
     // 事件
     searchInput.addEventListener('input', (e) => {
       state.query = e.target.value.trim();
@@ -152,7 +424,7 @@
       container.innerHTML = `<p>缺少文章标识（post 参数）。返回 <a href="blog.html">文章列表</a>。</p>`;
       return;
     }
-    const posts = await loadPosts();
+    const posts = await getPosts();
     const post = posts.find(p => p.slug === slug);
     if (!post) {
       container.innerHTML = `<p>未找到文章 '${escapeHtml(slug)}'。返回 <a href="blog.html">文章列表</a>。</p>`;
@@ -190,7 +462,18 @@
     return String(s)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+  
+  function formatDate(d) {
+    try {
+      const date = new Date(d);
+      return date.toLocaleDateString('zh-CN', {year:'numeric', month:'short', day:'numeric'});
+    } catch {
+      return d;
+    }
   }
 
   // Detect page
@@ -200,15 +483,8 @@
       // 支持通过 URL ?tag=xxx 预设筛选
       const urlTag = new URLSearchParams(location.search).get('tag');
       if (urlTag) {
-        // small delay to allow renderListPage 初始化后设置筛选
-        setTimeout(() => {
-          const input = document.querySelector('#searchInput');
-          if (input) input.value = ''; // clear search
-          const btns = document.querySelectorAll('#tagFilters .tag');
-          btns.forEach(b => {
-            if (b.dataset.tag === urlTag) b.click();
-          });
-        }, 200);
+        const tagBtn = document.querySelector(`.tag[data-tag="${urlTag}"]`);
+        if (tagBtn) tagBtn.click();
       }
     } else if (document.querySelector('.post-container')) {
       renderPostPage();
