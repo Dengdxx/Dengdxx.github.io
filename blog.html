@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DX的博客</title>
+    <title>DX的博客 - 机器人技术分享</title>
+    <meta name="description" content="分享机器人技术、人工智能和编程经验，包含路径规划、ROS、深度学习等专业内容">
+    <meta name="keywords" content="机器人博客,ROS教程,路径规划,深度学习,机械臂控制,SLAM">
+    <meta name="author" content="Deng DX">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="DX的博客 - 机器人技术分享">
+    <meta property="og:description" content="分享机器人技术、人工智能和编程经验">
+    <meta property="og:image" content="https://dx258.me/assets/images/blog-og-image.png">
+    <meta property="og:url" content="https://dx258.me/blog.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DX的博客 - 机器人技术分享">
+    <meta name="twitter:description" content="分享机器人技术、人工智能和编程经验">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+CjxwYXRoIGQ9Ik04IDEwSDEyVjE0SDhWMTBaTTIwIDEwSDI0VjE0SDIwVjEwWk0xMiAyMEgyMFYyNEgxMlYyMFoiIGZpbGw9IndoaXRlIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MCIgeDE9IjAiIHkxPSIwIiB4Mj0iMzIiIHkyPSIzMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMDBEQkRFIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZDMDBGRiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=">
+    
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         /* 博客页面特定样式 */
@@ -271,6 +290,41 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
+        /* 通知样式 */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* 改善表单可访问性 */
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: 2px solid #00DBDE;
+            outline-offset: 2px;
+        }
+        
+        .submit-button:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+        }
+        
         @media (max-width: 768px) {
             .blog-header h1 {
                 font-size: 2rem;
@@ -298,24 +352,27 @@
     </style>
 </head>
 <body data-theme="dark">
+    <!-- 跳过链接，改善键盘导航 -->
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    
     <!-- 顶部导航栏 -->
-    <nav class="main-nav">
+    <nav class="main-nav" role="navigation" aria-label="主导航">
         <div class="nav-container">
-            <a href="index.html" class="nav-brand">
-                <span class="brand-logo">DX</span>
+            <a href="index.html" class="nav-brand" aria-label="返回DX主页">
+                <span class="brand-logo" aria-hidden="true">DX</span>
                 <span class="brand-name">Deng DX</span>
             </a>
             <div class="nav-links">
                 <a href="index.html#projects" class="nav-link">项目</a>
                 <a href="index.html#skills" class="nav-link">技能</a>
                 <a href="index.html#contact" class="nav-link">联系</a>
-                <a href="blog.html" class="nav-link active">博客</a>
-                <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="切换主题">🌚</button>
+                <a href="blog.html" class="nav-link active" aria-current="page">博客</a>
+                <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="切换深色/浅色主题">🌚</button>
             </div>
-            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="菜单">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开导航菜单" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </button>
         </div>
     </nav>
@@ -327,7 +384,7 @@
     <button class="new-post-button" id="newPostButton" aria-label="新建博客">+</button>
     
     <div class="container">
-        <header class="blog-header">
+        <header class="blog-header" id="main-content">
             <h1>DX的博客</h1>
             <p>分享机器人技术、人工智能和编程经验</p>
         </header>
@@ -408,43 +465,18 @@
     <script>
         // 博客页面特定的JavaScript
         document.addEventListener('DOMContentLoaded', function() {
-            // 检查本地存储的主题设置
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-            document.body.setAttribute('data-theme', savedTheme);
-            
-            // 主题切换按钮
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                updateToggleIcon(savedTheme);
-                themeToggle.addEventListener('click', function() {
-                    const currentTheme = document.body.getAttribute('data-theme');
-                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    
-                    document.body.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    updateToggleIcon(newTheme);
-                    
-                    // 通知粒子背景更新颜色
-                    if (window.particleBackground) {
-                        window.particleBackground.createParticles();
-                    }
-                });
-            }
-            
-            function updateToggleIcon(theme) {
-                if (themeToggle) {
-                    themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
-                }
-            }
-            
-            // 移动端菜单切换
+            // 移动端菜单切换 (额外处理，确保博客页面正常工作)
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const navLinks = document.querySelector('.nav-links');
 
-            if (mobileMenuToggle) {
+            if (mobileMenuToggle && navLinks) {
                 mobileMenuToggle.addEventListener('click', () => {
-                    navLinks.classList.toggle('active');
+                    const isActive = navLinks.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
+                    
+                    // 更新 ARIA 属性
+                    mobileMenuToggle.setAttribute('aria-expanded', isActive.toString());
+                    mobileMenuToggle.setAttribute('aria-label', isActive ? '关闭导航菜单' : '打开导航菜单');
                 });
             }
 
@@ -456,6 +488,8 @@
                     }
                     if (mobileMenuToggle) {
                         mobileMenuToggle.classList.remove('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                        mobileMenuToggle.setAttribute('aria-label', '打开导航菜单');
                     }
                 });
             });
@@ -504,42 +538,124 @@
                     e.preventDefault();
                     
                     // 获取表单数据
-                    const title = document.getElementById('postTitle').value;
+                    const title = document.getElementById('postTitle').value.trim();
                     const date = document.getElementById('postDate').value;
-                    const content = document.getElementById('postContent').value;
+                    const content = document.getElementById('postContent').value.trim();
                     
-                    // 格式化日期显示
-                    const formattedDate = new Date(date).toLocaleDateString('zh-CN', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                    
-                    // 创建新的博客文章卡片
-                    const newPostCard = document.createElement('div');
-                    newPostCard.className = 'glass-card blog-post-card';
-                    newPostCard.innerHTML = `
-                        <h3>${title}</h3>
-                        <div class="date">${formattedDate}</div>
-                        <p>${content}</p>
-                        <a href="#" class="read-more">阅读全文 →</a>
-                    `;
-                    
-                    // 将新文章添加到页面顶部
-                    if (blogPostsContainer) {
-                        blogPostsContainer.insertBefore(newPostCard, blogPostsContainer.firstChild);
+                    // 基本验证
+                    if (!title) {
+                        alert('请输入文章标题');
+                        document.getElementById('postTitle').focus();
+                        return;
                     }
                     
-                    // 重置表单并关闭
-                    newPostForm.reset();
-                    document.getElementById('postDate').value = today;
-                    if (newPostFormContainer) {
-                        newPostFormContainer.classList.remove('active');
+                    if (!date) {
+                        alert('请选择发布日期');
+                        document.getElementById('postDate').focus();
+                        return;
                     }
                     
-                    // 滚动到新文章
-                    newPostCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    if (!content) {
+                        alert('请输入内容摘要');
+                        document.getElementById('postContent').focus();
+                        return;
+                    }
+                    
+                    if (title.length > 100) {
+                        alert('标题过长，请限制在100个字符以内');
+                        document.getElementById('postTitle').focus();
+                        return;
+                    }
+                    
+                    if (content.length > 500) {
+                        alert('内容摘要过长，请限制在500个字符以内');
+                        document.getElementById('postContent').focus();
+                        return;
+                    }
+                    
+                    try {
+                        // 格式化日期显示
+                        const formattedDate = new Date(date).toLocaleDateString('zh-CN', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        });
+                        
+                        // 创建新的博客文章卡片
+                        const newPostCard = document.createElement('div');
+                        newPostCard.className = 'glass-card blog-post-card';
+                        newPostCard.setAttribute('role', 'article');
+                        newPostCard.innerHTML = `
+                            <h3>${escapeHtml(title)}</h3>
+                            <div class="date">${formattedDate}</div>
+                            <p>${escapeHtml(content)}</p>
+                            <a href="#" class="read-more">阅读全文 →</a>
+                        `;
+                        
+                        // 将新文章添加到页面顶部
+                        if (blogPostsContainer) {
+                            blogPostsContainer.insertBefore(newPostCard, blogPostsContainer.firstChild);
+                        }
+                        
+                        // 重置表单并关闭
+                        newPostForm.reset();
+                        document.getElementById('postDate').value = today;
+                        if (newPostFormContainer) {
+                            newPostFormContainer.classList.remove('active');
+                        }
+                        
+                        // 滚动到新文章
+                        newPostCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        
+                        // 显示成功消息
+                        showNotification('博客文章已成功添加！', 'success');
+                        
+                    } catch (error) {
+                        console.error('Error creating blog post:', error);
+                        showNotification('添加文章时发生错误，请重试', 'error');
+                    }
                 });
+            }
+            
+            // HTML转义函数，防止XSS
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+            }
+            
+            // 通知函数
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 3000);
             }
         });
     </script>

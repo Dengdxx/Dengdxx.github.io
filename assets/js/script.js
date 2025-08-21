@@ -1,46 +1,76 @@
-// 主题切换逻辑
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
+// 等待DOM加载完成后执行
+document.addEventListener('DOMContentLoaded', function() {
+    // 主题切换逻辑
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
 
-// 检查本地存储中的主题偏好
-const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-body.setAttribute('data-theme', savedTheme);
-updateToggleIcon(savedTheme);
+    if (themeToggle) {
+        // 检查本地存储中的主题偏好
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        body.setAttribute('data-theme', savedTheme);
+        updateToggleIcon(savedTheme);
 
-themeToggle.addEventListener('click', () => {
-    const currentTheme = body.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    body.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateToggleIcon(newTheme);
-    
-    // 通知粒子背景更新颜色
-    if (window.particleBackground) {
-        window.particleBackground.createParticles();
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateToggleIcon(newTheme);
+            
+            // 通知粒子背景更新颜色
+            if (window.particleBackground) {
+                window.particleBackground.createParticles();
+            }
+        });
     }
-});
 
-function updateToggleIcon(theme) {
-    themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
-}
+    function updateToggleIcon(theme) {
+        if (themeToggle) {
+            themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
+        }
+    }
 
-// 移动端菜单切换
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const navLinks = document.querySelector('.nav-links');
+    // 移动端菜单切换
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navLinks = document.querySelector('.nav-links');
 
-if (mobileMenuToggle) {
-    mobileMenuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('active');
-        mobileMenuToggle.classList.toggle('active');
+    if (mobileMenuToggle && navLinks) {
+        mobileMenuToggle.addEventListener('click', () => {
+            const isActive = navLinks.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            
+            // 更新 ARIA 属性
+            mobileMenuToggle.setAttribute('aria-expanded', isActive.toString());
+            mobileMenuToggle.setAttribute('aria-label', isActive ? '关闭导航菜单' : '打开导航菜单');
+        });
+    }
+
+    // 点击导航链接后关闭移动菜单
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            if (navLinks) {
+                navLinks.classList.remove('active');
+            }
+            if (mobileMenuToggle) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', '打开导航菜单');
+            }
+        });
     });
-}
-
-// 点击导航链接后关闭移动菜单
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-        mobileMenuToggle.classList.remove('active');
+    
+    // ESC键关闭移动菜单
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navLinks && navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            if (mobileMenuToggle) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', '打开导航菜单');
+                mobileMenuToggle.focus(); // 返回焦点到按钮
+            }
+        }
     });
 });
 
