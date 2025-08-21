@@ -12,21 +12,21 @@
 ## ✨ 预览
 
 ### 🌙 深色主题
-<div align="center">
+<div>
   <img src="docs/images/homepage-dark.png" alt="深色主题主页" width="800">
 
 ### ☀️ 浅色主题
-<div align="center">
+<div>
   <img src="docs/images/homepage-light.png" alt="浅色主题主页" width="800">
 </div>
 
 ### 📝 博客系统
-<div align="center">
+<div>
   <img src="docs/images/blog-page.png" alt="博客页面" width="800">
 </div>
 
 ### 📱 移动端适配
-<div align="center">
+<div>
   <img src="docs/images/homepage-mobile.png" alt="移动端显示" width="300">
 </div>
 
@@ -246,51 +246,6 @@ npm install -g serve
 serve .
 ```
 
-#### 方法 4：使用其他工具
-```bash
-# 使用 PHP (如果已安装)
-php -S localhost:8000
-
-# 使用 Ruby (如果已安装)
-ruby -run -e httpd . -p 8000
-
-# 使用 Live Server (VS Code 扩展)
-# 安装 Live Server 插件，右键选择 "Open with Live Server"
-```
-
-### 🔧 开发环境设置
-
-如果您想参与开发，推荐以下配置：
-
-```bash
-# 1. 克隆仓库
-git clone https://github.com/Dengdxx/Dengdxx.github.io.git
-cd Dengdxx.github.io
-
-# 2. 启动开发服务器（带热重载）
-# 使用 Python
-python -m http.server 8000 &
-
-# 3. 在浏览器中访问
-open http://localhost:8000
-
-# 4. 开始开发！
-```
-
-### 📋 系统要求
-
-- **浏览器**: Chrome 60+, Firefox 55+, Safari 12+, Edge 79+
-- **开发工具**: 任意代码编辑器（推荐 VS Code）
-- **本地服务器**: Python 3.x / Node.js 14+ / PHP 7+ （可选）
-
-### ⚡ 性能优化
-
-为了获得最佳性能体验：
-
-1. **使用 HTTPS**: 部署时启用 HTTPS（GitHub Pages 自动支持）
-2. **启用压缩**: 生产环境建议启用 Gzip 压缩
-3. **CDN 加速**: 可以考虑使用 CDN 加速静态资源
-4. **缓存策略**: 合理设置浏览器缓存策略
 
 ## 🎨 主题系统
 
@@ -321,13 +276,6 @@ open http://localhost:8000
 
 网站采用移动优先的响应式设计策略，确保在各种设备上都有良好的用户体验。
 
-### 📐 断点设计
-
-| 设备类型 | 屏幕尺寸 | 布局特点 |
-|----------|----------|----------|
-| 📱 **手机** | < 768px | 单列布局、大按钮、堆叠式导航 |
-| 📟 **平板** | 768px - 1024px | 双列布局、适中的元素间距 |
-| 💻 **桌面** | > 1024px | 多列网格、丰富的交互效果 |
 
 ### 🎯 移动端优化
 
@@ -336,172 +284,11 @@ open http://localhost:8000
 - **快速加载**：图片懒加载、CSS/JS 压缩
 - **离线访问**：PWA 特性，支持离线浏览
 
-### 🔧 兼容性测试
 
-已在以下设备和浏览器中测试通过：
-
-| 类别 | 支持情况 |
-|------|----------|
-| **桌面浏览器** | Chrome 60+, Firefox 55+, Safari 12+, Edge 79+ |
-| **移动浏览器** | iOS Safari 12+, Chrome Mobile 60+, Samsung Internet |
-| **屏幕分辨率** | 320px ~ 4K (3840px) |
-| **操作系统** | Windows, macOS, Linux, iOS, Android |
-
-## 🚀 部署
-
-### 🔄 自动部署 (GitHub Pages)
-
-项目使用 GitHub Pages 进行自动化部署：
-
-```bash
-# 1. Fork 或 Clone 项目
-git clone https://github.com/Dengdxx/Dengdxx.github.io.git
-
-# 2. 修改内容后推送到 main 分支
-git add .
-git commit -m "更新网站内容"
-git push origin main
-
-# 3. GitHub Pages 会自动部署
-# 访问 https://your-username.github.io 查看效果
-```
-
-### 🏗️ 部署配置
-
-1. **仓库设置**：
-   - 仓库名必须是 `username.github.io` 格式
-   - 在 Settings → Pages 中选择 source 为 `main` 分支
-
-2. **自定义域名**（可选）：
-   ```bash
-   # 在 CNAME 文件中添加域名
-   echo "your-domain.com" > CNAME
    ```
 
-3. **SSL 证书**：
-   - GitHub Pages 自动提供免费 SSL 证书
-   - 支持 HTTPS 访问
 
-### 🌐 其他部署方式
 
-#### Vercel 部署
-```bash
-# 1. 安装 Vercel CLI
-npm i -g vercel
-
-# 2. 在项目根目录执行
-vercel
-
-# 3. 按提示完成配置
-```
-
-#### Netlify 部署
-```bash
-# 1. 连接 GitHub 仓库到 Netlify
-# 2. 设置构建命令（留空，因为是静态文件）
-# 3. 设置发布目录为 "." 
-```
-
-#### 传统服务器部署
-```bash
-# 上传所有文件到 web 服务器根目录
-# 确保支持 HTML5 History API（如果需要）
-# 配置 HTTPS 和 Gzip 压缩
-```
-
-### 🔧 部署优化
-
-#### 性能优化
-```nginx
-# Nginx 配置示例
-server {
-    listen 443 ssl http2;
-    server_name your-domain.com;
-    
-    # 启用 Gzip 压缩
-    gzip on;
-    gzip_types text/css application/javascript;
-    
-    # 设置缓存
-    location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg)$ {
-        expires 1y;
-        add_header Cache-Control "public, no-transform";
-    }
-}
-```
-
-#### CDN 加速
-```html
-<!-- 在 HTML 中使用 CDN 链接 -->
-<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-```
-
-## 🤝 贡献
-
-欢迎参与项目改进！以下是参与贡献的步骤：
-
-### 🛠️ 开发流程
-
-1. **Fork 项目**
-   ```bash
-   # 点击页面右上角的 Fork 按钮
-   git clone https://github.com/your-username/Dengdxx.github.io.git
-   ```
-
-2. **创建特性分支**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-3. **开发和测试**
-   ```bash
-   # 启动本地服务器
-   python -m http.server 8000
-   
-   # 在浏览器中测试功能
-   open http://localhost:8000
-   ```
-
-4. **提交更改**
-   ```bash
-   git add .
-   git commit -m "feat: 添加新功能描述"
-   ```
-
-5. **推送并创建 PR**
-   ```bash
-   git push origin feature/your-feature-name
-   # 在 GitHub 上创建 Pull Request
-   ```
-
-### 📋 贡献指南
-
-#### 代码规范
-- **HTML**: 使用语义化标签，保持良好的结构
-- **CSS**: 遵循 BEM 命名规范，使用 CSS 自定义属性
-- **JavaScript**: 使用 ES6+ 语法，保持代码简洁
-- **提交信息**: 使用 Conventional Commits 规范
-
-#### 功能建议
-以下功能欢迎贡献：
-
-- [ ] 📊 **数据统计**: 文章阅读量、标签统计
-- [ ] 🔍 **高级搜索**: 正则表达式、日期范围搜索
-- [ ] 📤 **导入导出**: 支持 Markdown 文件批量导入
-- [ ] 🌍 **国际化**: 多语言支持
-- [ ] 📱 **PWA 增强**: 离线缓存、通知推送
-- [ ] 🎨 **主题定制**: 用户自定义主题色彩
-- [ ] 💬 **评论系统**: 集成第三方评论服务
-
-#### 问题反馈
-- 🐛 **Bug 报告**: 使用 GitHub Issues，提供详细的重现步骤
-- 💡 **功能请求**: 描述需求和使用场景
-- 📝 **文档改进**: 发现文档错误或不完整的地方
-
-### 🏆 贡献者
-
-感谢所有为项目做出贡献的开发者！
 
 <!-- 这里可以添加贡献者列表 -->
 [![Contributors](https://contrib.rocks/image?repo=Dengdxx/Dengdxx.github.io)](https://github.com/Dengdxx/Dengdxx.github.io/graphs/contributors)
@@ -525,46 +312,15 @@ furnished to do so, subject to the following conditions:
 [完整许可证文本请查看 LICENSE 文件]
 ```
 
-### 🔓 使用权限
-
-✅ **允许的使用**：
-- 个人和商业使用
-- 修改和分发
-- 私人使用
-- 创建衍生作品
-
-❗ **注意事项**：
-- 保留版权声明
-- 提供许可证副本
-- 声明更改内容
 
 ## 📞 联系方式
 
-### 👨‍💻 作者信息
-
-**Deng DX** - 机器人开发者
-- 🎓 专业背景：机器人技术、人工智能
-- 🔬 研究方向：SLAM、路径规划、深度学习
-- 💼 技术栈：Python, C++, ROS, TensorFlow
-
-### 📬 联系方式
 
 | 平台 | 链接 | 用途 |
 |------|------|------|
-| 📧 **邮箱** | [dengdx@tju.edu.cn](mailto:dengdx@tju.edu.cn) | 正式沟通、合作咨询 |
-| 💻 **GitHub** | [https://github.com/Dengdxx](https://github.com/Dengdxx) | 代码交流、项目合作 |
-| 🔗 **LinkedIn** | [个人 LinkedIn](https://linkedin.com) | 职业网络、学术交流 |
-| 🏠 **个人网站** | [https://dengdxx.github.io/](https://dengdxx.github.io/) | 作品展示、博客文章 |
-
-### 💬 交流内容
-
-欢迎就以下话题进行交流：
-- 🤖 机器人技术和算法讨论
-- 🧠 人工智能和机器学习
-- 💻 开源项目合作
-- 🎓 学术研究和论文交流
-- 🛠️ 技术问题和解决方案
-
+| 📧 **邮箱** | [dengdx@tju.edu.cn](mailto:dengdx@tju.edu.cn) 
+| 💻 **GitHub** | [https://github.com/Dengdxx](https://github.com/Dengdxx) 
+| 🏠 **个人网站** | [https://dengdxx.github.io/](https://dengdxx.github.io/) 
 ---
 
 <div align="center">
