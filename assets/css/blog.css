@@ -12,6 +12,16 @@
   word-wrap: break-word;
 }
 
+/* 文章页标题区域居中对齐 */
+.post-container article > div:first-child {
+  text-align: center;
+}
+
+/* 文章页标题居中 */
+.post-container h1 {
+  text-align: center;
+}
+
 .post-content {
   max-width: 100%;
   overflow-x: auto;
@@ -30,6 +40,7 @@
   overflow-wrap: break-word;
   word-wrap: break-word;
   hyphens: auto;
+  text-align: center;
 }
 
 .post-content pre {

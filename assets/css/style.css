@@ -48,7 +48,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -188,7 +188,7 @@ body {
         left: -100%;
         width: 100%;
         height: calc(100vh - 80px);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.25);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         flex-direction: column;
@@ -297,7 +297,7 @@ h1 {
 }
 
 [data-theme="light"] h1 {
-    background: linear-gradient(90deg, #2980b9, #27ae60);
+    background: linear-gradient(90deg, #3498db, #2ecc71);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
