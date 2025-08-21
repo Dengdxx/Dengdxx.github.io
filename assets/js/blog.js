@@ -75,7 +75,7 @@
   function basicMarkdownToHtml(markdown) {
     let html = markdown;
     
-    // 处理代码块 (``code```)
+    // 处理代码块 (```code```)
     html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
     
     // 处理行内代码 (`code`)
@@ -99,19 +99,50 @@
     html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
     
     // 处理引用
-    html = html.replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>');
+    html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
     
-    // 处理无序列表
-    html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>');
+    // 处理无序列表 - 修复列表渲染问题
+    html = html.replace(/^- (.*$)/gim, '<li>$1</li>');
+    // 将连续的li元素组合成ul
+    html = html.replace(/(<li>.*?<\/li>)(\s*<li>.*?<\/li>)*/gm, function(match) {
+      return '<ul>' + match + '</ul>';
+    });
     
-    // 处理段落
-    html = html.replace(/^\s*(\w[\s\S]*?)(?=(\n\s*\n|$))/gim, '<p>$1</p>');
+    // 处理段落 - 修复段落识别问题
+    const lines = html.split('\n');
+    const processedLines = [];
+    let inList = false;
+    let inCodeBlock = false;
     
-    // 处理换行
-    html = html.replace(/\n/g, '<br />');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // 检查是否在代码块中
+      if (line.includes('<pre><code>')) inCodeBlock = true;
+      if (line.includes('</code></pre>')) inCodeBlock = false;
+      
+      // 检查是否在列表中
+      if (line.includes('<ul>') || line.includes('<li>')) inList = true;
+      if (line.includes('</ul>')) inList = false;
+      
+      // 如果是空行或者在代码块/列表中，直接添加
+      if (line.trim() === '' || inCodeBlock || inList || 
+          line.includes('<h') || line.includes('<blockquote') || 
+          line.includes('<img') || line.includes('<pre>')) {
+        processedLines.push(line);
+      } else if (line.trim().length > 0) {
+        // 非空行且不在特殊块中，包装成段落
+        if (!line.includes('<p>')) {
+          processedLines.push('<p>' + line.trim() + '</p>');
+        } else {
+          processedLines.push(line);
+        }
+      } else {
+        processedLines.push(line);
+      }
+    }
     
-    return html;
+    return processedLines.join('\n');
   }
   
   // 单元格相关函数
@@ -354,6 +385,16 @@
       postForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // 添加密码验证保护
+        const password = prompt('请输入管理员密码以创建文章:');
+        if (!password) return; // 用户取消输入
+        
+        // 验证密码 (密码: qweasd123)
+        if (password !== 'qweasd123') {
+          alert('密码错误，无法创建文章。');
+          return;
+        }
+
         // 获取表单数据
         const title = qs('#postTitle').value.trim();
         const tags = qs('#postTags').value.split(',').map(t => t.trim()).filter(t => t);
@@ -534,15 +575,6 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
-  }
-  
-  function formatDate(d) {
-    try {
-      const date = new Date(d);
-      return date.toLocaleDateString('zh-CN', {year:'numeric', month:'short', day:'numeric'});
-    } catch {
-      return d;
-    }
   }
 
   // Detect page
