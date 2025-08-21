@@ -56,6 +56,11 @@
 
   // 生成文章slug
   function generateSlug(title) {
+    // 如果包含中文字符，直接使用encodeURIComponent
+    if (/[\u4e00-\u9fff]/.test(title)) {
+      return encodeURIComponent(title.replace(/\s+/g, '-'));
+    }
+    // 对于英文标题，使用原来的处理方式
     return title.toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
