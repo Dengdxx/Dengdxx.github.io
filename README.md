@@ -239,13 +239,7 @@ serve .
 - **离线访问**：PWA 特性，支持离线浏览
 
 
-   ```
 
-
-
-
-<!-- 这里可以添加贡献者列表 -->
-[![Contributors](https://contrib.rocks/image?repo=Dengdxx/Dengdxx.github.io)](https://github.com/Dengdxx/Dengdxx.github.io/graphs/contributors)
 
 ## 📄 许可证
 
