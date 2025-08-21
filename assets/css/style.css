@@ -297,7 +297,7 @@ h1 {
 }
 
 [data-theme="light"] h1 {
-    background: linear-gradient(90deg, #8ac4e2, #d3eed9);
+    background: linear-gradient(90deg, #2980b9, #27ae60);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
