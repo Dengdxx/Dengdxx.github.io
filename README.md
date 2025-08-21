@@ -1,7 +1,7 @@
 # Deng DX 个人主页
 
-![GitHub](https://img.shields.io/github/license/Dengdxx/Dengdxx.github.io)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Dengdxx/Dengdxx.github.io)
+![GitHub](https://img.shields.io/github/license/Dengdxx/Dengdxx.github.io)
 
 > 机器人开发者 Deng DX 的个人主页，专注于机器人技术、人工智能和编程经验分享。
 
