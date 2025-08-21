@@ -56,8 +56,44 @@ class DinosaurGame {
         closeButton.innerHTML = '×';
         closeButton.onclick = () => this.hideGame();
         
+        // Create theme toggle button for the game
+        const gameThemeToggle = document.createElement('button');
+        gameThemeToggle.className = 'game-theme-toggle';
+        gameThemeToggle.id = 'gameThemeToggle';
+        gameThemeToggle.setAttribute('aria-label', '切换深色/浅色主题');
+        
+        // Set initial theme icon based on current theme
+        const currentTheme = document.body.getAttribute('data-theme');
+        gameThemeToggle.innerHTML = currentTheme === 'dark' ? '🌞' : '🌚';
+        
+        // Add click handler for the game theme toggle
+        gameThemeToggle.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update all theme toggle buttons manually
+            const allToggleButtons = [
+                document.getElementById('themeToggle'),
+                document.getElementById('errorThemeToggle'),
+                document.getElementById('gameThemeToggle')
+            ].filter(Boolean);
+            
+            allToggleButtons.forEach(button => {
+                button.textContent = newTheme === 'dark' ? '🌞' : '🌚';
+            });
+            
+            // Notify particle background to update colors
+            if (window.particleBackground) {
+                window.particleBackground.createParticles();
+            }
+        });
+        
         // Assemble game container
         this.gameContainer.appendChild(closeButton);
+        this.gameContainer.appendChild(gameThemeToggle);
         this.gameContainer.appendChild(gameInfo);
         this.gameContainer.appendChild(this.canvas);
         

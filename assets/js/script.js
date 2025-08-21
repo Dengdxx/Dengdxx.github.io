@@ -1,34 +1,51 @@
 // 等待DOM加载完成后执行
 document.addEventListener('DOMContentLoaded', function() {
-    // 主题切换逻辑
-    const themeToggle = document.getElementById('themeToggle');
+    // 主题切换逻辑 - 支持多个主题切换按钮
     const body = document.body;
+    const themeButtons = [
+        document.getElementById('themeToggle'),           // 主页导航栏按钮
+        document.getElementById('errorThemeToggle'),     // 404页面按钮
+        document.getElementById('gameThemeToggle')       // 游戏内按钮
+    ].filter(Boolean); // 移除null/undefined的按钮
 
-    if (themeToggle) {
-        // 检查本地存储中的主题偏好
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-        body.setAttribute('data-theme', savedTheme);
-        updateToggleIcon(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateToggleIcon(newTheme);
-            
-            // 通知粒子背景更新颜色
-            if (window.particleBackground) {
-                window.particleBackground.createParticles();
+    // 检查本地存储中的主题偏好
+    const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    body.setAttribute('data-theme', savedTheme);
+    
+    // 更新所有主题切换按钮的图标
+    function updateAllToggleIcons(theme) {
+        themeButtons.forEach(button => {
+            if (button) {
+                button.textContent = theme === 'dark' ? '🌞' : '🌚';
             }
         });
     }
+    
+    // 初始化所有按钮图标
+    updateAllToggleIcons(savedTheme);
+
+    // 为所有主题切换按钮添加事件监听器
+    themeButtons.forEach(button => {
+        if (button) {
+            button.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateAllToggleIcons(newTheme);
+                
+                // 通知粒子背景更新颜色
+                if (window.particleBackground) {
+                    window.particleBackground.createParticles();
+                }
+            });
+        }
+    });
 
     function updateToggleIcon(theme) {
-        if (themeToggle) {
-            themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
-        }
+        // 保留这个函数以保持向后兼容性，但使用新的updateAllToggleIcons函数
+        updateAllToggleIcons(theme);
     }
 
     // 移动端菜单切换
