@@ -507,6 +507,58 @@ footer {
     margin-top: 2rem;
 }
 
+/* 改善可访问性和焦点管理 */
+*:focus {
+    outline: 2px solid #00DBDE;
+    outline-offset: 2px;
+}
+
+[data-theme="light"] *:focus {
+    outline-color: #ff8a00;
+}
+
+/* 跳过链接（键盘导航用户） */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #000;
+    color: #fff;
+    padding: 8px;
+    text-decoration: none;
+    z-index: 100;
+    border-radius: 4px;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* 减少动画（用户偏好） */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* 高对比度支持 */
+@media (prefers-contrast: high) {
+    :root {
+        --text-color: #000000;
+        --card-bg: rgba(255, 255, 255, 0.9);
+        --card-border: rgba(0, 0, 0, 0.3);
+    }
+    
+    [data-theme="dark"] {
+        --text-color: #ffffff;
+        --card-bg: rgba(0, 0, 0, 0.9);
+        --card-border: rgba(255, 255, 255, 0.3);
+    }
+}
+
 /* 粒子画布样式 */
 #particles-js {
     position: fixed;

@@ -3,15 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DXRobot</title>
+    <title>DX Robot - 机器人开发者</title>
+    <meta name="description" content="机器人开发者DX的个人主页，专注于机器人技术、人工智能和编程经验分享">
+    <meta name="keywords" content="机器人,人工智能,ROS,SLAM,深度学习,Python,C++">
+    <meta name="author" content="Deng DX">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="DX Robot - 机器人开发者">
+    <meta property="og:description" content="专注于机器人技术、人工智能和编程经验分享">
+    <meta property="og:image" content="https://dx258.me/assets/images/og-image.png">
+    <meta property="og:url" content="https://dx258.me">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="DX Robot - 机器人开发者">
+    <meta name="twitter:description" content="专注于机器人技术、人工智能和编程经验分享">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+CjxwYXRoIGQ9Ik04IDEwSDEyVjE0SDhWMTBaTTIwIDEwSDI0VjE0SDIwVjEwWk0xMiAyMEgyMFYyNEgxMlYyMFoiIGZpbGw9IndoaXRlIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MCIgeDE9IjAiIHkxPSIwIiB4Mj0iMzIiIHkyPSIzMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjMDBEQkRFIi8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0ZDMDBGRiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=">
+    
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-theme="dark">
+    <!-- 跳过链接，改善键盘导航 -->
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    
     <!-- 顶部导航栏 -->
-    <nav class="main-nav">
+    <nav class="main-nav" role="navigation" aria-label="主导航">
         <div class="nav-container">
-            <a href="#" class="nav-brand">
-                <span class="brand-logo">DX</span>
+            <a href="#" class="nav-brand" aria-label="DX机器人开发者主页">
+                <span class="brand-logo" aria-hidden="true">DX</span>
                 <span class="brand-name">Deng DX</span>
             </a>
             <div class="nav-links">
@@ -19,18 +41,18 @@
                 <a href="#skills" class="nav-link">技能</a>
                 <a href="#contact" class="nav-link">联系</a>
                 <a href="blog.html" class="nav-link">博客</a>
-                <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="切换主题">🌚</button>
+                <button class="theme-toggle nav-theme-toggle" id="themeToggle" aria-label="切换深色/浅色主题">🌚</button>
             </div>
-            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="菜单">
-                <span></span>
-                <span></span>
-                <span></span>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开导航菜单" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
             </button>
         </div>
     </nav>
 
     <div class="container">
-        <header>
+        <header id="main-content">
             <h1 data-text="Hi, I'm DX">Hi, I'm DX</h1>
             <p class="tagline">机器人开发者 | 探索智能边界，构建未来交互</p>
             <div class="header-buttons">

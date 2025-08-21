@@ -37,8 +37,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (mobileMenuToggle && navLinks) {
         mobileMenuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
+            const isActive = navLinks.classList.toggle('active');
             mobileMenuToggle.classList.toggle('active');
+            
+            // 更新 ARIA 属性
+            mobileMenuToggle.setAttribute('aria-expanded', isActive.toString());
+            mobileMenuToggle.setAttribute('aria-label', isActive ? '关闭导航菜单' : '打开导航菜单');
         });
     }
 
@@ -50,8 +54,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             if (mobileMenuToggle) {
                 mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', '打开导航菜单');
             }
         });
+    });
+    
+    // ESC键关闭移动菜单
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navLinks && navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            if (mobileMenuToggle) {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                mobileMenuToggle.setAttribute('aria-label', '打开导航菜单');
+                mobileMenuToggle.focus(); // 返回焦点到按钮
+            }
+        }
     });
 });
 
