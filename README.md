@@ -59,51 +59,41 @@
 
 ## 🛠️ 技术栈
 
-| 类别 | 技术 | 版本 | 说明 |
+| 类别 | 技术 | 说明 |
 |------|------|------|------|
-| **前端框架** | 原生 JavaScript | ES6+ | 无框架依赖，轻量高效 |
-| **样式** | CSS3 | - | 包含动画、渐变、网格布局 |
-| **标记语言** | HTML5 | - | 语义化标签，无障碍访问 |
-| **Markdown 解析** | [marked.js](https://github.com/markedjs/marked) | 最新版 | Markdown 到 HTML 转换 |
-| **数学公式** | MathJax | 3.x | LaTeX 数学公式渲染 |
-| **部署** | GitHub Pages | - | 自动化部署和 CI/CD |
-| **版本控制** | Git | - | 代码版本管理 |
+| **前端框架** | 原生 JavaScript | 无框架依赖，轻量高效 |
+| **样式** | CSS3 | 包含动画、渐变、网格布局 |
+| **标记语言** | HTML5 | 语义化标签，无障碍访问 |
+| **Markdown 解析** | [marked.js](https://github.com/markedjs/marked) | Markdown 到 HTML 转换 |
+| **数学公式** | MathJax | LaTeX 数学公式渲染 |
+| **部署** | GitHub Pages | 自动化部署 |
 
 ## 📁 项目结构
 
 ```
-📁 Dengdxx.github.io/
-├── 📄 index.html              # 🏠 主页 - 个人简介和项目展示
-├── 📄 blog.html               # 📝 博客列表页 - 文章索引和搜索
-├── 📄 post.html               # 📖 文章详情页 - 单篇文章展示
-├── 📄 404.html                # ❌ 404 页面 - 自定义错误页
-├── 📄 CNAME                   # 🌐 域名配置文件
-├── 📄 LICENSE                 # 📜 MIT 开源协议
-├── 📄 package.json            # 📦 项目配置文件
-├── 📁 assets/                 # 📂 静态资源目录
-│   ├── 📁 css/               # 🎨 样式文件
-│   │   ├── style.css         # 主页样式（响应式 + 主题）
-│   │   └── blog.css          # 博客样式（文章渲染 + 交互）
-│   ├── 📁 js/                # ⚙️ JavaScript 脚本
-│   │   ├── script.js         # 主页交互脚本
-│   │   ├── blog.js           # 博客系统核心逻辑
+ Dengdxx.github.io/
+├──  index.html              # 🏠 主页 - 个人简介和项目展示
+├──  blog.html               # 📝 博客列表页 - 文章索引和搜索
+├──  post.html               # 📖 文章详情页 - 单篇文章展示
+├──  404.html                # ❌ 404 页面 - 自定义错误页
+├──  CNAME                   # 🌐 域名配置文件
+├──  LICENSE                 # 📜 MIT 开源协议
+├──  package.json            # 📦 项目配置文件
+├──  assets/                 # 📂 静态资源目录
+│   ├──  css/               # 🎨 样式文件
+│   │   ├──  style.css      # 主页样式（响应式 + 主题）
+│   │   └──  blog.css        # 博客样式（文章渲染 + 交互）
+│   ├──  js/                # ⚙️ JavaScript 脚本
+│   │   ├── script.js       # 主页交互脚本
+│   │   ├── blog.js         # 博客系统核心逻辑
 │   │   └── particles.js      # 背景粒子特效
-│   └── 📁 data/              # 🗃️ 数据文件
-│       └── posts.json        # 博客文章数据存储
-├── 📁 docs/                  # 📚 文档目录
-│   └── 📁 images/           # 🖼️ README 图片资源
-└── 📄 README.md              # 📖 项目说明文档
+│   └──  data/              # 🗃️ 数据文件
+│       └── posts.json       # 博客文章数据存储
+├──  docs/                  # 📚 文档目录
+│   └──  images/           # 🖼️ README 图片资源
+└──  README.md              # 📖 项目说明文档
 ```
 
-### 🗂️ 关键文件说明
-
-| 文件/目录 | 功能描述 | 技术要点 |
-|----------|----------|----------|
-| `index.html` | 个人主页入口 | 响应式布局、SEO优化 |
-| `blog.html` | 博客系统主界面 | 动态内容渲染、搜索筛选 |
-| `assets/css/` | 样式表集合 | CSS Grid、Flexbox、动画 |
-| `assets/js/` | 前端逻辑 | ES6+、模块化、异步处理 |
-| `assets/data/` | 数据存储 | JSON格式、本地存储集成 |
 
 ## 📝 博客系统
 
@@ -112,33 +102,19 @@
 ### ✨ 核心特性
 
 #### 📚 文章管理
-- **双重存储**：预设文章存储在 `assets/data/posts.json`，用户创建的文章保存在 localStorage
-- **完整生命周期**：支持文章的创建、编辑、查看、删除等完整操作
-- **批量操作**：支持多选删除、批量标签管理
 
 #### 🔍 搜索与筛选
-```javascript
-// 支持多种搜索方式
-- 标题搜索：直接输入文章标题关键词
-- 内容搜索：搜索文章正文内容
-- 标签筛选：点击标签快速筛选相关文章
-- 组合搜索：标题 + 标签的组合筛选
-```
+
 
 #### 📝 Markdown 编辑器
-- **实时预览**：左侧编辑，右侧实时预览效果
-- **语法支持**：完整的 Markdown 语法支持
-- **数学公式**：集成 MathJax，支持 LaTeX 数学公式
-- **代码高亮**：支持多种编程语言的语法高亮
+- **语法支持**：完整的 Markdown, LaTeX 语法支持
 - **单元格结构**：类似 Jupyter Notebook 的单元格编辑方式
 
 #### 🔒 权限控制
 ```
 管理员密码：qweasd123
 ```
-- 文章删除需要密码验证
-- 管理功能的访问控制
-- 防误删机制
+- 新增、编辑、删除文章需要密码验证
 
 ### 🛠️ 技术实现
 
@@ -164,16 +140,6 @@
 - **`marked.js`**：Markdown 解析引擎
 - **`MathJax`**：数学公式渲染
 
-#### API 设计
-```javascript
-// 主要功能函数
-loadPosts()          // 加载文章列表
-searchPosts(query)   // 搜索文章
-filterByTag(tag)     // 按标签筛选
-createPost(data)     // 创建新文章
-deletePost(id)       // 删除文章
-renderMarkdown(md)   // 渲染 Markdown
-```
 
 ### 🎯 使用指南
 
@@ -194,14 +160,6 @@ renderMarkdown(md)   // 渲染 Markdown
 - 点击标签：快速筛选该标签的所有文章
 - 组合使用：先选择标签，再输入关键词搜索
 
-### 🔄 数据迁移
-
-如需将文章从其他平台迁移到本博客系统：
-
-1. 准备 JSON 格式的文章数据
-2. 将数据添加到 `assets/data/posts.json`
-3. 确保数据格式符合上述 schema
-4. 刷新页面查看迁移结果
 
 ## 💻 本地运行
 
@@ -217,18 +175,14 @@ git clone https://github.com/Dengdxx/Dengdxx.github.io.git
 # 进入项目目录
 cd Dengdxx.github.io
 
-# 直接在浏览器中打开 index.html
-open index.html  # macOS
-# 或双击 index.html 文件
+# 双击 index.html 文件
 ```
 
-#### 方法 2：使用 Python 服务器（推荐）
+#### 方法 2：使用 Python 服务器
 ```bash
 # Python 3.x
 python -m http.server 8000
 
-# Python 2.x
-python -m SimpleHTTPServer 8000
 
 # 访问 http://localhost:8000
 ```
@@ -270,7 +224,7 @@ serve .
 用户可以通过以下方式切换主题：
 - 点击导航栏的主题切换按钮（🌚/🌞）
 - 系统会自动记住用户的主题偏好
-- 支持系统主题自动跟随（计划功能）
+- 支持系统主题自动跟随（开发中）
 
 ## 📱 响应式设计
 
@@ -297,20 +251,6 @@ serve .
 
 本项目使用 [MIT 许可证](LICENSE) 开源。
 
-```
-MIT License
-
-Copyright (c) 2025 Deng DX
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-[完整许可证文本请查看 LICENSE 文件]
-```
 
 
 ## 📞 联系方式
