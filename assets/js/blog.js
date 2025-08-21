@@ -525,6 +525,14 @@
       </article>
     `;
     
+    // 触发 MathJax 渲染
+    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+      MathJax.typesetPromise();
+    } else if (typeof MathJax !== 'undefined' && MathJax.Hub) {
+      // 对于 MathJax v2
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, container]);
+    }
+    
     // 添加删除文章功能
     const deleteBtn = document.getElementById('deletePostBtn');
     if (deleteBtn) {

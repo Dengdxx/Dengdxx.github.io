@@ -1,5 +1,14 @@
 [
   {
+    "title": "Markdown 渲染功能测试：数学公式与积分运算",
+    "slug": "markdown-math-test",
+    "date": "2025-01-15",
+    "tags": ["数学","积分","Markdown","测试"],
+    "excerpt": "这篇文章演示了 Markdown 渲染功能，包括数学公式、积分运算、代码块、列表等各种元素的显示效果。",
+    "readTime": "约 5 分钟",
+    "content": "<h1>Markdown 渲染功能测试</h1><p>这篇文章用来测试博客系统的 Markdown 渲染功能，特别是数学公式的显示效果。</p><h2>基本 Markdown 语法</h2><h3>文本格式</h3><p>这里有一些基本的文本格式：<strong>粗体文本</strong>、<em>斜体文本</em>、以及 <code>行内代码</code>。</p><h3>列表</h3><ul><li>无序列表项 1</li><li>无序列表项 2</li><li>无序列表项 3</li></ul><h2>数学公式测试</h2><h3>基本积分公式</h3><p>以下是一些常用的积分公式：</p><p><strong>1. 基本积分公式：</strong></p><p>$$\\int x^n dx = \\frac{x^{n+1}}{n+1} + C \\quad (n \\neq -1)$$</p><p><strong>2. 指数函数积分：</strong></p><p>$$\\int e^x dx = e^x + C$$</p><p>$$\\int a^x dx = \\frac{a^x}{\\ln a} + C \\quad (a > 0, a \\neq 1)$$</p><p><strong>3. 三角函数积分：</strong></p><p>$$\\int \\sin x \\, dx = -\\cos x + C$$</p><p>$$\\int \\cos x \\, dx = \\sin x + C$$</p><p>$$\\int \\tan x \\, dx = -\\ln|\\cos x| + C$$</p><h3>定积分示例</h3><p>计算函数 $f(x) = x^2$ 在区间 $[0, 2]$ 上的定积分：</p><p>$$\\int_0^2 x^2 dx = \\left[\\frac{x^3}{3}\\right]_0^2 = \\frac{8}{3} - 0 = \\frac{8}{3}$$</p><h3>分部积分法</h3><p>分部积分公式：</p><p>$$\\int u \\, dv = uv - \\int v \\, du$$</p><p>例如，计算 $\\int x e^x dx$：</p><p>设 $u = x$，$dv = e^x dx$，则 $du = dx$，$v = e^x$</p><p>$$\\int x e^x dx = x e^x - \\int e^x dx = x e^x - e^x + C = e^x(x - 1) + C$$</p><h2>代码块测试</h2><p>这里是一个 Python 代码示例：</p><pre><code>import numpy as np\nimport matplotlib.pyplot as plt\n\ndef gaussian(x, mu, sigma):\n    return (1/(sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma)**2)\n\n# 绘制高斯分布\nx = np.linspace(-5, 5, 100)\ny = gaussian(x, 0, 1)\n\nplt.plot(x, y)\nplt.title('标准正态分布')\nplt.xlabel('x')\nplt.ylabel('概率密度')\nplt.show()\n</code></pre><h2>高级数学公式</h2><h3>多元函数积分</h3><p>二重积分：</p><p>$$\\iint_D f(x,y) \\, dA = \\int_a^b \\int_c^d f(x,y) \\, dy \\, dx$$</p><h3>矢量分析</h3><p>梯度、散度、旋度：</p><ul><li>梯度：$\\nabla f = \\left(\\frac{\\partial f}{\\partial x}, \\frac{\\partial f}{\\partial y}, \\frac{\\partial f}{\\partial z}\\right)$</li><li>散度：$\\nabla \\cdot \\vec{F} = \\frac{\\partial F_x}{\\partial x} + \\frac{\\partial F_y}{\\partial y} + \\frac{\\partial F_z}{\\partial z}$</li><li>旋度：$\\nabla \\times \\vec{F} = \\begin{vmatrix} \\vec{i} & \\vec{j} & \\vec{k} \\\\ \\frac{\\partial}{\\partial x} & \\frac{\\partial}{\\partial y} & \\frac{\\partial}{\\partial z} \\\\ F_x & F_y & F_z \\end{vmatrix}$</li></ul><h2>引用测试</h2><blockquote>数学是科学的女王，而数论是数学的女王。 — 高斯</blockquote><h2>链接和图片测试</h2><p>这是一个链接：<a href=\"https://www.mathjax.org/\">MathJax 官网</a></p><p>数学公式渲染由 MathJax 提供支持，它能够完美地显示 LaTeX 格式的数学表达式。</p><h2>总结</h2><p>这篇测试文章展示了博客系统的各种 Markdown 渲染功能：</p><ul><li>✅ 标题层级显示</li><li>✅ 文本格式（粗体、斜体、行内代码）</li><li>✅ 列表渲染</li><li>✅ 数学公式显示（行内和块级）</li><li>✅ 代码块语法高亮</li><li>✅ 引用块显示</li><li>✅ 链接渲染</li></ul><p>通过这个测试，我们可以确认博客系统已经具备了完整的 Markdown 渲染能力，特别是数学公式的支持。</p>"
+  },
+  {
     "title": "欢迎来到我的博客",
     "slug": "welcome",
     "date": "2025-08-20",
