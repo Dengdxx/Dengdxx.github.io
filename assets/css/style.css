@@ -94,7 +94,7 @@ body {
 }
 
 [data-theme="light"] .brand-logo {
-    background: linear-gradient(135deg, #9eb3c2, #c9ccd3);
+    background: linear-gradient(135deg, #8ac4e2, #d3eed9);
 }
 
 .brand-name {
@@ -297,7 +297,7 @@ h1 {
 }
 
 [data-theme="light"] h1 {
-    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
+    background: linear-gradient(90deg, #8ac4e2, #d3eed9);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -362,12 +362,12 @@ h1 {
 }
 
 [data-theme="light"] .cta-button {
-    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
+    background: linear-gradient(90deg, #8ac4e2, #d3eed9);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="light"] .cta-button::before {
-    background: linear-gradient(90deg, #c9ccd3, #9eb3c2);
+    background: linear-gradient(90deg, #d3eed9, #8ac4e2);
 }
 
 [data-theme="light"] .cta-button:hover {
@@ -421,7 +421,7 @@ h2::after {
 }
 
 [data-theme="light"] h2::after {
-    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
+    background: linear-gradient(90deg, #8ac4e2, #d3eed9);
 }
 
 .projects-grid,
@@ -496,7 +496,7 @@ h2::after {
 }
 
 [data-theme="light"] .contact-icon:hover {
-    color: #9eb3c2;
+    color: #8ac4e2;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -534,7 +534,7 @@ footer a:hover {
 }
 
 [data-theme="light"] *:focus {
-    outline-color: #9eb3c2;
+    outline-color: #8ac4e2;
 }
 
 /* 跳过链接（键盘导航用户） */
