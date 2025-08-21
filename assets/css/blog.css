@@ -4,6 +4,53 @@
   padding: 2rem 1rem 4rem;
 }
 
+/* 文章页样式 */
+.post-container {
+  padding: 2rem 1rem 4rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.post-content {
+  max-width: 100%;
+  overflow-x: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.post-content h1,
+.post-content h2,
+.post-content h3,
+.post-content h4,
+.post-content h5,
+.post-content h6 {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.post-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.post-content code {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.post-content table {
+  max-width: 100%;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
 .blog-header {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -346,6 +393,38 @@ textarea.form-control {
 
 [data-theme="light"] .cell-content pre {
   background: rgba(0, 0, 0, 0.05);
+}
+
+/* Admin functionality - hidden by default */
+.admin-button {
+  display: none;
+}
+
+.admin-mode .admin-button {
+  display: inline-block;
+}
+
+.admin-mode .admin-button.admin-create {
+  display: block;
+}
+
+/* Edit form styles */
+#editPostForm {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+#editPostForm h2 {
+  margin-top: 0;
+  color: var(--text-color);
+}
+
+/* Card actions layout */
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.6rem;
 }
 
 /* 单元格操作按钮 */
