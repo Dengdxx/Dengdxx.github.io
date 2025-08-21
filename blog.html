@@ -408,40 +408,11 @@
     <script>
         // 博客页面特定的JavaScript
         document.addEventListener('DOMContentLoaded', function() {
-            // 检查本地存储的主题设置
-            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-            document.body.setAttribute('data-theme', savedTheme);
-            
-            // 主题切换按钮
-            const themeToggle = document.getElementById('themeToggle');
-            if (themeToggle) {
-                updateToggleIcon(savedTheme);
-                themeToggle.addEventListener('click', function() {
-                    const currentTheme = document.body.getAttribute('data-theme');
-                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                    
-                    document.body.setAttribute('data-theme', newTheme);
-                    localStorage.setItem('theme', newTheme);
-                    updateToggleIcon(newTheme);
-                    
-                    // 通知粒子背景更新颜色
-                    if (window.particleBackground) {
-                        window.particleBackground.createParticles();
-                    }
-                });
-            }
-            
-            function updateToggleIcon(theme) {
-                if (themeToggle) {
-                    themeToggle.textContent = theme === 'dark' ? '🌞' : '🌚';
-                }
-            }
-            
-            // 移动端菜单切换
+            // 移动端菜单切换 (额外处理，确保博客页面正常工作)
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const navLinks = document.querySelector('.nav-links');
 
-            if (mobileMenuToggle) {
+            if (mobileMenuToggle && navLinks) {
                 mobileMenuToggle.addEventListener('click', () => {
                     navLinks.classList.toggle('active');
                     mobileMenuToggle.classList.toggle('active');
