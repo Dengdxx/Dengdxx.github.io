@@ -1,40 +1,19 @@
 # DX 的个人主页 🤖
 
 ![License](https://img.shields.io/github/license/Dengdxx/Dengdxx.github.io)
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
-![Responsive](https://img.shields.io/badge/Design-Responsive-blue)
 
-<div align="center">
-  <h3>🔗 <a href="https://dengdxx.github.io/">在线演示 Live Demo</a></h3>
-  <p><em>机器人开发者 DX 的个人主页，专注于机器人技术、人工智能和编程经验分享</em></p>
-</div>
 
 ---
 
-## 📑 目录
-
-- [✨ 预览](#-预览)
-- [🚀 特性](#-特性)
-- [🛠️ 技术栈](#️-技术栈)
-- [📁 项目结构](#-项目结构)
-- [💻 本地运行](#-本地运行)
-- [📝 博客系统](#-博客系统)
-- [🎨 主题系统](#-主题系统)
-- [📱 响应式设计](#-响应式设计)
-- [🚀 部署](#-部署)
-- [🤝 贡献](#-贡献)
-- [📄 许可证](#-许可证)
-- [📞 联系方式](#-联系方式)
 
 ## ✨ 预览
 
 ### 🌙 深色主题
 <div align="center">
   <img src="docs/images/homepage-dark.png" alt="深色主题主页" width="800">
-</div>
 
 ### ☀️ 浅色主题
 <div align="center">
