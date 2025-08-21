@@ -94,7 +94,7 @@ body {
 }
 
 [data-theme="light"] .brand-logo {
-    background: linear-gradient(135deg, #ff8a00, #e52e71);
+    background: linear-gradient(135deg, #9eb3c2, #c9ccd3);
 }
 
 .brand-name {
@@ -297,7 +297,7 @@ h1 {
 }
 
 [data-theme="light"] h1 {
-    background: linear-gradient(90deg, #ff8a00, #e52e71);
+    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -362,12 +362,12 @@ h1 {
 }
 
 [data-theme="light"] .cta-button {
-    background: linear-gradient(90deg, #ff8a00, #e52e71);
+    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 [data-theme="light"] .cta-button::before {
-    background: linear-gradient(90deg, #e52e71, #ff8a00);
+    background: linear-gradient(90deg, #c9ccd3, #9eb3c2);
 }
 
 [data-theme="light"] .cta-button:hover {
@@ -421,7 +421,7 @@ h2::after {
 }
 
 [data-theme="light"] h2::after {
-    background: linear-gradient(90deg, #ff8a00, #e52e71);
+    background: linear-gradient(90deg, #9eb3c2, #c9ccd3);
 }
 
 .projects-grid,
@@ -496,7 +496,7 @@ h2::after {
 }
 
 [data-theme="light"] .contact-icon:hover {
-    color: #ff8a00;
+    color: #9eb3c2;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -505,6 +505,26 @@ footer {
     font-size: 1rem;
     opacity: var(--footer-opacity);
     margin-top: 2rem;
+    text-align: center;
+}
+
+footer a {
+    color: #00DBDE;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #FC00FF;
+    text-decoration: underline;
+}
+
+[data-theme="light"] footer a {
+    color: #0066cc;
+}
+
+[data-theme="light"] footer a:hover {
+    color: #e52e71;
 }
 
 /* 改善可访问性和焦点管理 */
@@ -514,7 +534,7 @@ footer {
 }
 
 [data-theme="light"] *:focus {
-    outline-color: #ff8a00;
+    outline-color: #9eb3c2;
 }
 
 /* 跳过链接（键盘导航用户） */
