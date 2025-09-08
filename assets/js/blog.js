@@ -477,31 +477,47 @@
   // 将Markdown内容分割成单元格
   function splitContentIntoCells(content) {
     const cells = [];
-    const parts = content.split(/(?=^```)|(?<=^```[\s\S]*?^```$)/gm);
     
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i].trim();
-      if (!part) continue;
-      
-      // 检查是否是代码块
-      if (part.startsWith('```')) {
-        const codeMatch = part.match(/^```(?:\w+)?\n?([\s\S]*?)```$/);
-        if (codeMatch) {
-          cells.push({
-            type: 'code',
-            content: codeMatch[1].trim()
-          });
+    // 使用更精确的正则表达式来分割内容
+    // 先分割代码块，然后处理文本内容
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    // 找到所有代码块并记录它们的位置
+    while ((match = codeBlockRegex.exec(content)) !== null) {
+      // 添加代码块前的文本
+      if (match.index > lastIndex) {
+        const textBefore = content.slice(lastIndex, match.index).trim();
+        if (textBefore) {
+          parts.push({ type: 'text', content: textBefore });
         }
-      } else {
-        // 文本内容
-        cells.push({
-          type: 'text',
-          content: part
-        });
+      }
+      
+      // 添加代码块
+      const codeMatch = match[0].match(/^```(?:\w+)?\n?([\s\S]*?)```$/);
+      if (codeMatch) {
+        parts.push({ type: 'code', content: codeMatch[1].trim() });
+      }
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // 添加最后的文本部分
+    if (lastIndex < content.length) {
+      const textAfter = content.slice(lastIndex).trim();
+      if (textAfter) {
+        parts.push({ type: 'text', content: textAfter });
       }
     }
     
-    return cells;
+    // 如果没有找到代码块，将整个内容作为文本
+    if (parts.length === 0 && content.trim()) {
+      parts.push({ type: 'text', content: content.trim() });
+    }
+    
+    return parts;
   }
 
   // ----------------- 列表页逻辑 -----------------
