@@ -266,6 +266,244 @@
     return escapeHtml(content);
   }
 
+  // Markdown文件导入功能
+  function importMarkdownFile(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const content = e.target.result;
+      parseAndPopulateForm(content);
+    };
+    reader.onerror = function() {
+      alert('读取文件失败，请重试');
+    };
+    reader.readAsText(file, 'UTF-8');
+  }
+
+  // 解析Markdown内容并填充表单
+  function parseAndPopulateForm(markdownContent) {
+    let content = markdownContent;
+    let metadata = {};
+    
+    // 检查是否有frontmatter (YAML头部)
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (frontmatterMatch) {
+      const frontmatter = frontmatterMatch[1];
+      content = frontmatterMatch[2];
+      
+      // 简单解析YAML frontmatter
+      metadata = parseFrontmatter(frontmatter);
+    }
+    
+    // 从内容中提取标题（如果frontmatter中没有）
+    if (!metadata.title) {
+      const titleMatch = content.match(/^#\s+(.+)$/m);
+      if (titleMatch) {
+        metadata.title = titleMatch[1].trim();
+        // 移除标题行
+        content = content.replace(/^#\s+.+$/m, '').trim();
+      }
+    }
+    
+    // 填充表单字段
+    const titleInput = qs('#postTitle');
+    const tagsInput = qs('#postTags');
+    const excerptInput = qs('#postExcerpt');
+    const readTimeInput = qs('#postReadTime');
+    const cellsContainer = qs('#cellsContainer');
+    
+    if (titleInput && metadata.title) {
+      titleInput.value = metadata.title;
+    }
+    
+    if (tagsInput && metadata.tags) {
+      const tagsStr = Array.isArray(metadata.tags) ? metadata.tags.join(', ') : metadata.tags;
+      tagsInput.value = tagsStr;
+    }
+    
+    if (excerptInput && metadata.excerpt) {
+      excerptInput.value = metadata.excerpt;
+    }
+    
+    if (readTimeInput && metadata.readTime) {
+      readTimeInput.value = metadata.readTime;
+    }
+    
+    // 清空现有单元格
+    if (cellsContainer) {
+      cellsContainer.innerHTML = '';
+      
+      // 将内容分割成单元格
+      const cells = splitContentIntoCells(content);
+      
+      cells.forEach(cellData => {
+        let cell;
+        if (cellData.type === 'code') {
+          cell = createCodeCell(cellData.content);
+        } else {
+          cell = createTextCell(cellData.content);
+        }
+        cellsContainer.appendChild(cell);
+        attachCellEventListeners(cell);
+      });
+      
+      // 如果没有生成任何单元格，创建一个默认的文本单元格
+      if (cells.length === 0 && content.trim()) {
+        const cell = createTextCell(content);
+        cellsContainer.appendChild(cell);
+        attachCellEventListeners(cell);
+      }
+    }
+    
+    alert('Markdown文件导入成功！');
+  }
+
+  // 简单的frontmatter解析器
+  function parseFrontmatter(frontmatter) {
+    const metadata = {};
+    const lines = frontmatter.split('\n');
+    
+    lines.forEach(line => {
+      const colonIndex = line.indexOf(':');
+      if (colonIndex > 0) {
+        const key = line.substring(0, colonIndex).trim();
+        let value = line.substring(colonIndex + 1).trim();
+        
+        // 移除引号
+        if ((value.startsWith('"') && value.endsWith('"')) || 
+            (value.startsWith("'") && value.endsWith("'"))) {
+          value = value.slice(1, -1);
+        }
+        
+        // 处理数组（简单实现）
+        if (value.startsWith('[') && value.endsWith(']')) {
+          value = value.slice(1, -1).split(',').map(item => item.trim().replace(/['"]/g, ''));
+        }
+        
+        metadata[key] = value;
+      }
+    });
+    
+    return metadata;
+  }
+
+  // 为单元格添加事件监听器
+  function attachCellEventListeners(cell) {
+    const deleteBtn = qs('.delete-cell', cell);
+    const moveUpBtn = qs('.move-up', cell);
+    const moveDownBtn = qs('.move-down', cell);
+    const previewBtn = qs('.preview-cell', cell);
+    const textarea = qs('textarea', cell);
+    const preview = qs('.cell-preview', cell);
+
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => {
+        cell.remove();
+      });
+    }
+
+    if (moveUpBtn) {
+      moveUpBtn.addEventListener('click', () => {
+        const prev = cell.previousElementSibling;
+        if (prev) {
+          cell.parentNode.insertBefore(cell, prev);
+        }
+      });
+    }
+
+    if (moveDownBtn) {
+      moveDownBtn.addEventListener('click', () => {
+        const next = cell.nextElementSibling;
+        if (next) {
+          cell.parentNode.insertBefore(next, cell);
+        }
+      });
+    }
+
+    // 添加预览功能
+    if (previewBtn && textarea && preview) {
+      let isPreviewMode = false;
+      
+      previewBtn.addEventListener('click', () => {
+        if (!isPreviewMode) {
+          // 切换到预览模式
+          const content = textarea.value;
+          const cellType = cell.dataset.type;
+          const renderedContent = renderCellContent(content, cellType);
+          
+          preview.innerHTML = renderedContent;
+          preview.style.display = 'block';
+          textarea.style.display = 'none';
+          
+          previewBtn.textContent = '📝';
+          previewBtn.title = '编辑模式';
+          isPreviewMode = true;
+          
+          // 为代码块添加复制按钮（如果是文本单元格且包含代码块）
+          if (cellType === 'text') {
+            addCopyButtonsToCodeBlocks();
+          }
+          
+          // 触发 MathJax 渲染（如果可用）
+          if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([preview]);
+          }
+        } else {
+          // 切换回编辑模式
+          preview.style.display = 'none';
+          textarea.style.display = 'block';
+          
+          previewBtn.textContent = '👁️';
+          previewBtn.title = '预览渲染';
+          isPreviewMode = false;
+        }
+      });
+    }
+
+    // 自动调整textarea高度
+    if (textarea) {
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
+      
+      // 初始化时调整高度
+      setTimeout(() => {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+      }, 0);
+    }
+  }
+
+  // 将Markdown内容分割成单元格
+  function splitContentIntoCells(content) {
+    const cells = [];
+    const parts = content.split(/(?=^```)|(?<=^```[\s\S]*?^```$)/gm);
+    
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      if (!part) continue;
+      
+      // 检查是否是代码块
+      if (part.startsWith('```')) {
+        const codeMatch = part.match(/^```(?:\w+)?\n?([\s\S]*?)```$/);
+        if (codeMatch) {
+          cells.push({
+            type: 'code',
+            content: codeMatch[1].trim()
+          });
+        }
+      } else {
+        // 文本内容
+        cells.push({
+          type: 'text',
+          content: part
+        });
+      }
+    }
+    
+    return cells;
+  }
+
   // ----------------- 列表页逻辑 -----------------
   async function renderListPage() {
     const posts = await getPosts();
@@ -646,92 +884,25 @@
         });
       }
 
-      // 为单元格添加事件监听器
-      function attachCellEventListeners(cell) {
-        const deleteBtn = qs('.delete-cell', cell);
-        const moveUpBtn = qs('.move-up', cell);
-        const moveDownBtn = qs('.move-down', cell);
-        const previewBtn = qs('.preview-cell', cell);
-        const textarea = qs('textarea', cell);
-        const preview = qs('.cell-preview', cell);
-
-        if (deleteBtn) {
-          deleteBtn.addEventListener('click', () => {
-            cell.remove();
-          });
-        }
-
-        if (moveUpBtn) {
-          moveUpBtn.addEventListener('click', () => {
-            const prev = cell.previousElementSibling;
-            if (prev) {
-              cell.parentNode.insertBefore(cell, prev);
-            }
-          });
-        }
-
-        if (moveDownBtn) {
-          moveDownBtn.addEventListener('click', () => {
-            const next = cell.nextElementSibling;
-            if (next) {
-              cell.parentNode.insertBefore(next, cell);
-            }
-          });
-        }
-
-        // 添加预览功能
-        if (previewBtn && textarea && preview) {
-          let isPreviewMode = false;
+      // Markdown文件导入功能
+      const markdownFileInput = qs('#markdownFileInput');
+      const importMarkdownBtn = qs('#importMarkdownBtn');
+      
+      if (markdownFileInput && importMarkdownBtn) {
+        importMarkdownBtn.addEventListener('click', () => {
+          const file = markdownFileInput.files[0];
+          if (!file) {
+            alert('请先选择一个Markdown文件');
+            return;
+          }
           
-          previewBtn.addEventListener('click', () => {
-            if (!isPreviewMode) {
-              // 切换到预览模式
-              const content = textarea.value;
-              const cellType = cell.dataset.type;
-              const renderedContent = renderCellContent(content, cellType);
-              
-              preview.innerHTML = renderedContent;
-              preview.style.display = 'block';
-              textarea.style.display = 'none';
-              
-              previewBtn.textContent = '📝';
-              previewBtn.title = '编辑模式';
-              isPreviewMode = true;
-              
-              // 为代码块添加复制按钮（如果是文本单元格且包含代码块）
-              if (cellType === 'text') {
-                addCopyButtonsToCodeBlocks();
-              }
-              
-              // 触发 MathJax 渲染（如果可用）
-              if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
-                MathJax.typesetPromise([preview]);
-              }
-            } else {
-              // 切换回编辑模式
-              preview.style.display = 'none';
-              textarea.style.display = 'block';
-              
-              previewBtn.textContent = '👁️';
-              previewBtn.title = '预览渲染';
-              isPreviewMode = false;
-            }
-          });
-        }
-
-        // 自动调整textarea高度
-        if (textarea) {
-          textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-          });
+          if (!file.name.toLowerCase().match(/\.(md|markdown)$/)) {
+            alert('请选择.md或.markdown文件');
+            return;
+          }
           
-          // 初始化时调整高度
-          setTimeout(() => {
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
-          }, 0);
-        }
+          importMarkdownFile(file);
+        });
       }
 
       postForm.addEventListener('submit', async (e) => {
