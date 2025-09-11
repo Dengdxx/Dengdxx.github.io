@@ -420,6 +420,25 @@ textarea.form-control {
   display: block;
 }
 
+/* Import section styling */
+.import-section {
+  border: 1px dashed var(--border-color);
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="light"] .import-section {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.form-help {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  display: block;
+  margin-top: 0.5rem;
+}
+
 /* Edit form styles */
 #editPostForm {
   padding: 1.5rem;
