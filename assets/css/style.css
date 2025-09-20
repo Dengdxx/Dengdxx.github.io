@@ -425,7 +425,8 @@ h2::after {
 }
 
 .projects-grid,
-.skills-list {
+.skills-list,
+.tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
@@ -433,7 +434,8 @@ h2::after {
 }
 
 .project-card,
-.skill-item {
+.skill-item,
+.tool-item {
     background: var(--card-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -445,22 +447,71 @@ h2::after {
 }
 
 .project-card:hover,
-.skill-item:hover {
+.skill-item:hover,
+.tool-item:hover {
     transform: translateY(-10px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
     background: var(--hover-card-bg);
 }
 
 .project-card h3,
-.skill-item h3 {
+.skill-item h3,
+.tool-item h3 {
     margin-top: 0;
     font-size: 1.5rem;
 }
 
 .project-card p,
-.skill-item p {
+.skill-item p,
+.tool-item p {
     opacity: var(--footer-opacity);
     line-height: 1.6;
+}
+
+/* Tool-specific styles */
+.tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #00DBDE, #FC00FF);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.tool-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    filter: brightness(1.1);
+}
+
+.tool-link.disabled {
+    background: linear-gradient(135deg, #666, #888);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tool-link.disabled:hover {
+    transform: none;
+    filter: none;
+}
+
+.tool-icon {
+    font-size: 1.2rem;
+}
+
+.tool-item.coming-soon {
+    opacity: 0.7;
+}
+
+[data-theme="light"] .tool-link {
+    background: linear-gradient(135deg, #8ac4e2, #d3eed9);
+    color: #333;
 }
 
 .contact-icons {
