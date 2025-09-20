@@ -631,7 +631,7 @@
         }
 
         function setButtonsDisabled(disabled) {
-            document.querySelectorAll('.op-btn, #reset-btn').forEach(b => b.disabled = disabled);
+            document.querySelectorAll('.tool-button, #reset-btn').forEach(b => b.disabled = disabled);
         }
 
         function stopAnimation() {
@@ -914,7 +914,7 @@
         
         // --- Event Listeners ---
         elements.opButtonsContainer.addEventListener('click', (e) => {
-            if (e.target.matches('.op-btn')) {
+            if (e.target.matches('.tool-button')) {
                 const operation = e.target.dataset.op;
                 const animatedOps = ['gradient', 'sobel'];
                 if (animatedOps.includes(operation)) startAnimation(operation);
