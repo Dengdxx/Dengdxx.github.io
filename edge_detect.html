@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>边缘检测算法对比演示</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .pixel-grid {
+            display: grid;
+            border: 1px solid #9ca3af;
+        }
+        .pixel {
+            width: 6px;
+            height: 6px;
+            border: 1px solid #e5e7eb;
+        }
+        .scanner {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ef4444;
+            background-color: rgba(239, 68, 68, 0.2);
+            box-sizing: border-box;
+            transition: all 0.05s linear;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            border: 1px solid #e5e7eb;
+        }
+        .btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 flex flex-col items-center">
+
+    <div class="w-full max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">边缘检测算法对比演示</h1>
+            <p class="text-lg text-gray-600 mt-2">形态学方法 vs Sobel vs Canny</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col lg:flex-row gap-8 justify-center items-start">
+            
+            <!-- Image Grids Column -->
+            <div class="flex flex-col items-center gap-8 w-full">
+                <!-- Main Grids -->
+                <div class="flex gap-4 sm:gap-8 flex-wrap justify-center">
+                    <div class="text-center">
+                        <h2 class="text-xl font-semibold mb-3 text-gray-700">输入图像 (Input)</h2>
+                        <div id="input-container" class="relative">
+                            <div id="input-grid" class="pixel-grid"></div>
+                            <div id="scanner" class="scanner hidden"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h2 id="output-title" class="text-xl font-semibold mb-3 text-gray-700">输出图像 (Output)</h2>
+                        <div id="output-grid" class="pixel-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Intermediate Steps Grids -->
+                <div id="intermediate-steps" class="hidden w-full">
+                    <h3 id="intermediate-title" class="text-2xl font-semibold text-center mb-4 text-gray-800 border-t pt-8">处理流程</h3>
+                    <div id="summary-box" class="info-card max-w-3xl mx-auto mb-8 bg-orange-50 border border-orange-200"></div>
+                    <div id="intermediate-grids-container" class="flex gap-4 sm:gap-8 flex-wrap justify-center">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="info-card w-full max-w-sm lg:max-w-xs mt-4 lg:mt-0 flex-shrink-0">
+                <div class="pb-4">
+                    <h3 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">算法选项</h3>
+                    <p class="text-sm text-gray-500 mb-3">选择一种算法来查看边缘检测效果。</p>
+                    <div id="op-buttons-container" class="grid grid-cols-2 gap-3">
+                         <button data-op="gradient" class="op-btn btn bg-red-600 text-white font-bold py-2 px-3 rounded-lg shadow-md hover:bg-red-700 text-sm">形态学梯度</button>
+                         <button data-op="sobel" class="op-btn btn bg-teal-600 text-white font-bold py-2 px-3 rounded-lg shadow-md hover:bg-teal-700 text-sm">Sobel 算子</button>
+                         <button data-op="optimal-edge" class="op-btn btn col-span-2 bg-orange-500 text-white font-bold py-2 px-3 rounded-lg shadow-md hover:bg-orange-600 text-sm mt-2">⭐ 标准梯度边缘 (粗)</button>
+                         <button data-op="precise-edge" class="op-btn btn col-span-2 bg-yellow-500 text-gray-800 font-bold py-2 px-3 rounded-lg shadow-md hover:bg-yellow-400 text-sm mt-2">🏆 精准单像素边缘</button>
+                         <button data-op="canny" class="op-btn btn col-span-2 bg-cyan-600 text-white font-bold py-2 px-3 rounded-lg shadow-md hover:bg-cyan-700 text-sm mt-2">🥇 Canny 算法</button>
+                    </div>
+                </div>
+                
+                <div id="calc-details" class="mt-4 pt-4 border-t hidden">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">动画计算过程</h3>
+                    <div id="sobel-details" class="hidden">
+                        <p>Gx = <span id="sobel-gx" class="font-mono"></span></p>
+                        <p>Gy = <span id="sobel-gy" class="font-mono"></span></p>
+                    </div>
+                    <div class="space-y-3 text-lg">
+                        <p>邻域最大值 (max): <span id="max-val" class="font-bold text-green-600">-</span></p>
+                        <p>邻域最小值 (min): <span id="min-val" class="font-bold text-blue-600">-</span></p>
+                        <p id="result-formula" class="text-xl"><b>输出值 = </b><span class="font-bold text-red-600" id="result-val">-</span></p>
+                    </div>
+                </div>
+
+                <!-- Shape Selector -->
+                <div class="mt-4 pt-4 border-t">
+                    <p class="text-sm text-gray-500 mb-2">选择图形:</p>
+                    <select id="shape-selector" class="w-full p-2 border rounded-lg bg-white text-sm focus:ring-2 focus:ring-blue-500">
+                        <optgroup label="基础图形">
+                            <option value="polygon" selected>不规则多边形</option>
+                            <option value="circle">圆形</option>
+                            <option value="star">星形</option>
+                            <option value="letterB">字母 B</option>
+                            <option value="c_shape">C形</option>
+                            <option value="blob">流形</option>
+                            <option value="multi_object">双目标</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="mt-4 pt-4 border-t">
+                     <div class="flex justify-between items-center mb-2">
+                        <p class="text-sm text-gray-500">噪点数量:</p>
+                        <span id="noise-label" class="text-sm font-medium text-gray-600">0%</span>
+                    </div>
+                    <input type="range" id="noise-slider" min="0" max="25" value="0" class="w-full">
+                </div>
+                <div class="mt-4">
+                    <p class="text-sm text-gray-500 mb-2">动画速度:</p>
+                    <input type="range" id="speed-slider" min="1" max="100" value="80" class="w-full">
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4 mt-6">
+                    <button id="reset-btn" class="btn bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600">重置图像</button>
+                    <button id="explain-btn" class="btn w-full bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-800">✨ Gemini 原理解析</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="gemini-container" class="info-card w-full max-w-4xl mt-8 mx-auto hidden"></div>
+
+    </div>
+
+    <script>
+        // --- Constants and Elements ---
+        const GRID_WIDTH = 100;
+        const GRID_HEIGHT = 100;
+        const PIXEL_SIZE = 6;
+
+        const elements = {
+            inputGrid: document.getElementById('input-grid'),
+            outputGrid: document.getElementById('output-grid'),
+            scanner: document.getElementById('scanner'),
+            resetBtn: document.getElementById('reset-btn'),
+            speedSlider: document.getElementById('speed-slider'),
+            explainBtn: document.getElementById('explain-btn'),
+            geminiContainer: document.getElementById('gemini-container'),
+            noiseSlider: document.getElementById('noise-slider'),
+            noiseLabel: document.getElementById('noise-label'),
+            shapeSelector: document.getElementById('shape-selector'),
+            maxVal: document.getElementById('max-val'),
+            minVal: document.getElementById('min-val'),
+            resultVal: document.getElementById('result-val'),
+            resultFormula: document.getElementById('result-formula'),
+            opButtonsContainer: document.getElementById('op-buttons-container'),
+            calcDetails: document.getElementById('calc-details'),
+            outputTitle: document.getElementById('output-title'),
+            intermediateSteps: document.getElementById('intermediate-steps'),
+            intermediateTitle: document.getElementById('intermediate-title'),
+            summaryBox: document.getElementById('summary-box'),
+            intermediateGridsContainer: document.getElementById('intermediate-grids-container'),
+            sobelDetails: document.getElementById('sobel-details'),
+            sobelGx: document.getElementById('sobel-gx'),
+            sobelGy: document.getElementById('sobel-gy'),
+        };
+
+        let inputPixelValues = [];
+        let animationFrameId = null;
+
+        // --- Shape Generation Functions ---
+        const shapeGenerators = {
+            polygon: () => {
+                const vertices = [ {x: 15, y: 25}, {x: 50, y: 10}, {x: 85, y: 40}, {x: 75, y: 80}, {x: 40, y: 90}, {x: 25, y: 60} ];
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => isInsideShape(x, y, vertices) ? 255 : 0));
+            },
+            circle: () => {
+                const cx = 50, cy = 50, r = 35;
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => (Math.sqrt((x - cx)**2 + (y - cy)**2) <= r) ? 255 : 0));
+            },
+            star: () => {
+                const vertices = [];
+                const cx = 50, cy = 50, outerR = 45, innerR = 20;
+                for (let i = 0; i < 10; i++) {
+                    const r = i % 2 === 0 ? outerR : innerR;
+                    const angle = i * Math.PI / 5 - Math.PI / 2;
+                    vertices.push({ x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
+                }
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => isInsideShape(x, y, vertices) ? 255 : 0));
+            },
+            letterB: () => {
+                let grid = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+                const drawRect = (x1, y1, x2, y2, val) => {
+                    for(let y = y1; y < y2; y++) for(let x = x1; x < x2; x++) if(grid[y]?.[x] !== undefined) grid[y][x] = val;
+                };
+                drawRect(20, 10, 35, 90, 255); drawRect(35, 10, 70, 25, 255);
+                drawRect(35, 40, 70, 55, 255); drawRect(60, 25, 75, 40, 255);
+                drawRect(35, 80, 70, 90, 255); drawRect(65, 55, 80, 80, 255);
+                drawRect(35, 25, 60, 40, 0); drawRect(35, 55, 65, 80, 0);
+                return grid;
+            },
+            c_shape: () => {
+                const vertices = [ {x:20,y:20}, {x:80,y:20}, {x:80,y:40}, {x:40,y:40}, {x:40,y:60}, {x:80,y:60}, {x:80,y:80}, {x:20,y:80} ];
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => isInsideShape(x, y, vertices) ? 255 : 0));
+            },
+            blob: () => {
+                const cx = 50, cy = 50, base_r = 30;
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => {
+                    const angle = Math.atan2(y - cy, x - cx);
+                    const radius = base_r + 8 * Math.sin(angle * 5) + 5 * Math.sin(angle * 3);
+                    return Math.sqrt((x - cx)**2 + (y - cy)**2) <= radius ? 255 : 0;
+                }));
+            },
+            multi_object: () => {
+                const c1x=30, c1y=30, r1=15;
+                const v2 = [ {x:60,y:60}, {x:85,y:65}, {x:70,y:85} ];
+                return Array.from({ length: GRID_HEIGHT }, (_, y) => Array.from({ length: GRID_WIDTH }, (_, x) => {
+                    const inCircle = Math.sqrt((x-c1x)**2 + (y-c1y)**2) <= r1;
+                    const inPoly = isInsideShape(x, y, v2);
+                    return (inCircle || inPoly) ? 255 : 0;
+                }));
+            }
+        };
+
+        // --- Core Image Processing Functions ---
+        function gaussianBlur(sourceGrid, kernel) {
+            const kernelSize = kernel.length;
+            const kernelRadius = Math.floor(kernelSize / 2);
+            const resultGrid = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            for (let y = kernelRadius; y < GRID_HEIGHT - kernelRadius; y++) {
+                for (let x = kernelRadius; x < GRID_WIDTH - kernelRadius; x++) {
+                    let sum = 0;
+                    for (let j = -kernelRadius; j <= kernelRadius; j++) for (let i = -kernelRadius; i <= kernelRadius; i++) sum += sourceGrid[y + j][x + i] * kernel[j + kernelRadius][i + kernelRadius];
+                    resultGrid[y][x] = sum;
+                }
+            }
+            return resultGrid.map(row => row.map(val => Math.max(0, Math.min(255, val))));
+        }
+        
+        function subtractGrids(gridA, gridB) {
+            return gridA.map((row, y) => row.map((val, x) => Math.max(0, val - gridB[y][x])));
+        }
+
+        // --- Grid and UI Setup ---
+        function createGrid(container) {
+            if (!container) return;
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${GRID_WIDTH}, ${PIXEL_SIZE}px)`;
+            for (let i = 0; i < GRID_WIDTH * GRID_HEIGHT; i++) {
+                const pixel = document.createElement('div');
+                pixel.classList.add('pixel');
+                container.appendChild(pixel);
+            }
+        }
+
+        function renderGrid(container, pixelValues) {
+            if (!container) return;
+            const pixels = container.children;
+            if (!pixels || pixels.length === 0) return;
+            for (let y = 0; y < GRID_HEIGHT; y++) {
+                for (let x = 0; x < GRID_WIDTH; x++) {
+                    const value = pixelValues[y][x];
+                    pixels[y * GRID_WIDTH + x].style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
+                }
+            }
+        }
+
+        function initialize() {
+            stopAnimation();
+            createGrid(elements.inputGrid);
+            createGrid(elements.outputGrid);
+            
+            const selectedShape = elements.shapeSelector.value;
+            const baseImage = shapeGenerators[selectedShape]();
+            
+            const noiseLevel = parseInt(elements.noiseSlider.value);
+            elements.noiseLabel.textContent = `${noiseLevel}%`;
+            inputPixelValues = baseImage;
+            if (noiseLevel > 0) {
+                for (let y = 0; y < GRID_HEIGHT; y++) {
+                    for (let x = 0; x < GRID_WIDTH; x++) {
+                        if (Math.random() * 100 < noiseLevel) {
+                            inputPixelValues[y][x] = (baseImage[y][x] === 0) ? 255 : 0;
+                        }
+                    }
+                }
+            }
+            
+            renderGrid(elements.inputGrid, inputPixelValues);
+            elements.scanner.classList.add('hidden');
+            elements.calcDetails.classList.add('hidden');
+            elements.intermediateSteps.classList.add('hidden');
+            elements.geminiContainer.classList.add('hidden');
+            elements.outputTitle.textContent = '输出图像 (Output)';
+            setButtonsDisabled(false);
+        }
+
+        function setButtonsDisabled(disabled) {
+            document.querySelectorAll('.op-btn, #reset-btn').forEach(b => b.disabled = disabled);
+        }
+
+        function stopAnimation() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+        }
+
+        function isInsideShape(x, y, vertices) {
+            let inside = false;
+            for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+                const xi = vertices[i].x, yi = vertices[i].y;
+                const xj = vertices[j].x, yj = vertices[j].y;
+                const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+                if (intersect) inside = !inside;
+            }
+            return inside;
+        }
+
+        // --- Operation Handlers ---
+        
+        function startAnimation(operation) {
+            stopAnimation();
+            setButtonsDisabled(true);
+            elements.intermediateSteps.classList.add('hidden');
+            elements.scanner.classList.remove('hidden');
+            elements.calcDetails.classList.remove('hidden');
+            elements.sobelDetails.classList.toggle(operation === 'sobel');
+            elements.outputTitle.textContent = `输出: ${operation.charAt(0).toUpperCase() + operation.slice(1)}`;
+
+            let x = 1, y = 1, frameCount = 0;
+            
+            function animate() {
+                const speed = 101 - elements.speedSlider.value;
+                const pixelsPerFrame = Math.max(1, Math.floor(100 / speed));
+
+                if (frameCount % 5 === 0) {
+                     for (let i = 0; i < pixelsPerFrame; i++) {
+                        if (y >= GRID_HEIGHT - 1) break;
+                        processPixelAnimated(x, y, operation, i === pixelsPerFrame - 1);
+                        x++;
+                        if (x >= GRID_WIDTH - 1) { x = 1; y++; }
+                     }
+                }
+                
+                if (y >= GRID_HEIGHT - 1) {
+                    elements.scanner.classList.add('hidden');
+                    setButtonsDisabled(false);
+                    return;
+                }
+                frameCount++;
+                animationFrameId = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function processPixelAnimated(x, y, operation, updateScanner) {
+            if (updateScanner) {
+                elements.scanner.style.left = `${(x - 1) * PIXEL_SIZE}px`;
+                elements.scanner.style.top = `${(y - 1) * PIXEL_SIZE}px`;
+            }
+
+            let maxVal = 0, minVal = 255, gx = 0, gy = 0;
+            const sobelXKernel = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+            const sobelYKernel = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+            
+            for (let j = -1; j <= 1; j++) {
+                for (let i = -1; i <= 1; i++) {
+                    const val = inputPixelValues[y + j][x + i];
+                    if (val > maxVal) maxVal = val;
+                    if (val < minVal) minVal = val;
+                    if (operation === 'sobel') {
+                        gx += val * sobelXKernel[j + 1][i + 1];
+                        gy += val * sobelYKernel[j + 1][i + 1];
+                    }
+                }
+            }
+            
+            let outputValue, formulaText = '';
+            switch (operation) {
+                case 'gradient': outputValue = maxVal - minVal; formulaText = `<b>输出 = </b><span class="font-bold text-red-600">${maxVal}-${minVal}=${outputValue}</span>`; break;
+                case 'sobel': outputValue = Math.min(255, Math.sqrt(gx*gx + gy*gy)); formulaText = `<b>输出 = |G| = </b><span class="font-bold text-red-600">${Math.round(outputValue)}</span>`; break;
+            }
+
+            elements.outputGrid.children[(y * GRID_WIDTH + x)].style.backgroundColor = `rgb(${outputValue}, ${outputValue}, ${outputValue})`;
+            
+            if (updateScanner) {
+                elements.maxVal.textContent = maxVal;
+                elements.minVal.textContent = minVal;
+                if (operation === 'sobel') {
+                    elements.sobelGx.textContent = gx;
+                    elements.sobelGy.textContent = gy;
+                }
+                elements.resultFormula.innerHTML = formulaText;
+            }
+        }
+        
+        function applyMorphOperation(sourceGrid, operation) {
+            const tempGrid = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            for (let y = 1; y < GRID_HEIGHT - 1; y++) {
+                for (let x = 1; x < GRID_WIDTH - 1; x++) {
+                    let maxVal = 0, minVal = 255;
+                    for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+                        const val = sourceGrid[y + j][x + i];
+                        if (val > maxVal) maxVal = val;
+                        if (val < minVal) minVal = val;
+                    }
+                    if (operation === 'erosion') tempGrid[y][x] = minVal;
+                    else if (operation === 'dilation') tempGrid[y][x] = maxVal;
+                    else if (operation === 'gradient') tempGrid[y][x] = maxVal-minVal;
+                }
+            }
+            return tempGrid;
+        }
+
+        function performOptimalEdgeExtraction() {
+            stopAnimation(); setButtonsDisabled(true); elements.calcDetails.classList.add('hidden');
+            elements.intermediateSteps.classList.remove('hidden');
+            elements.intermediateTitle.textContent = "标准梯度边缘提取流程";
+            elements.summaryBox.innerHTML = `<p class="text-gray-800 font-medium">该方法通过一个三步流程来获得降噪但较粗的边缘效果：</p><ol class="list-decimal list-inside mt-2 space-y-2 text-gray-700"><li><b>开运算 (Opening):</b> 移除图像背景中的孤立亮点 (盐噪声)。</li><li><b>闭运算 (Closing):</b> 填充图形内部可能存在的小黑洞 (椒噪声)。</li><li><b>梯度 (Gradient):</b> 在降噪后的“干净”图像上提取边缘，结果通常为2像素宽。</li></ol>`;
+
+            const container = elements.intermediateGridsContainer;
+            container.innerHTML = `<div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">1. 开运算结果</h4><div id="im1" class="pixel-grid"></div></div><div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">2. 闭运算结果</h4><div id="im2" class="pixel-grid"></div></div>`;
+            createGrid(document.getElementById('im1')); createGrid(document.getElementById('im2'));
+            elements.outputTitle.textContent = `最终边缘 (降噪后)`;
+            
+            const openedImage = applyMorphOperation(applyMorphOperation(inputPixelValues, 'erosion'), 'dilation');
+            renderGrid(document.getElementById('im1'), openedImage);
+            const closedImage = applyMorphOperation(applyMorphOperation(openedImage, 'dilation'), 'erosion');
+            renderGrid(document.getElementById('im2'), closedImage);
+            const finalEdge = applyMorphOperation(closedImage, 'gradient');
+            renderGrid(elements.outputGrid, finalEdge);
+            setButtonsDisabled(false);
+        }
+
+        function performPreciseEdgeExtraction() {
+            stopAnimation(); setButtonsDisabled(true); elements.calcDetails.classList.add('hidden');
+            elements.intermediateSteps.classList.remove('hidden');
+            elements.intermediateTitle.textContent = "精准单像素边缘提取流程 (内部梯度)";
+            elements.summaryBox.innerHTML = `<p class="text-gray-800 font-medium">该方法通过一个四步流程来获得最精确的1像素宽边缘：</p><ol class="list-decimal list-inside mt-2 space-y-2 text-gray-700"><li><b>开运算:</b> 移除背景中的白色亮点 (盐噪声)。</li><li><b>闭运算:</b> 填充图形内部的黑色小孔，得到一张“干净图像”。</li><li><b>腐蚀“干净图像”:</b> 将干净图像向内腐蚀一圈，得到“瘦身图像”。</li><li><b>图像相减:</b> 用“干净图像”减去“瘦身图像”，剩下的就是被腐蚀掉的、宽度为1像素的内轮廓。</li></ol>`;
+
+            const container = elements.intermediateGridsContainer;
+            container.innerHTML = `<div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">1. 开运算</h4><div id="im1" class="pixel-grid"></div></div><div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">2. 闭运算 (干净图像)</h4><div id="im2" class="pixel-grid"></div></div><div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">3. 腐蚀干净图像</h4><div id="im3" class="pixel-grid"></div></div>`;
+            ['im1', 'im2', 'im3'].forEach(id => createGrid(document.getElementById(id)));
+            elements.outputTitle.textContent = `最终边缘 (1像素宽)`;
+            
+            const openedImage = applyMorphOperation(applyMorphOperation(inputPixelValues, 'erosion'), 'dilation');
+            renderGrid(document.getElementById('im1'), openedImage);
+            const closedImage = applyMorphOperation(applyMorphOperation(openedImage, 'dilation'), 'erosion');
+            renderGrid(document.getElementById('im2'), closedImage);
+            const erodedCleanImage = applyMorphOperation(closedImage, 'erosion');
+            renderGrid(document.getElementById('im3'), erodedCleanImage);
+            const finalEdge = subtractGrids(closedImage, erodedCleanImage);
+            renderGrid(elements.outputGrid, finalEdge);
+            setButtonsDisabled(false);
+        }
+        
+        function performCanny() {
+            stopAnimation(); setButtonsDisabled(true); elements.calcDetails.classList.add('hidden');
+            elements.intermediateSteps.classList.remove('hidden');
+            elements.intermediateTitle.textContent = "Canny 算法处理流程";
+            elements.summaryBox.innerHTML = `<p class="text-gray-800 font-medium">Canny是业界公认最优的边缘检测算法之一，通过多步骤精确提取边缘：</p><ol class="list-decimal list-inside mt-2 space-y-2 text-gray-700"><li><b>高斯模糊:</b> 首先对图像降噪，为后续计算做准备。</li><li><b>计算梯度:</b> 使用Sobel算子计算每个像素的强度和方向。</li><li><b>非极大值抑制:</b> 将模糊的“多像素宽”边缘细化成单像素线。</li><li><b>双阈值和磁滞跟踪:</b> 消除弱边缘和噪点，并将不连续的边缘连接起来，形成最终轮廓。</li></ol>`;
+
+            const container = elements.intermediateGridsContainer;
+            container.innerHTML = `<div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">1. 高斯模糊</h4><div id="canny1" class="pixel-grid"></div></div><div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">2. 梯度强度</h4><div id="canny2" class="pixel-grid"></div></div><div class="text-center"><h4 class="text-lg font-semibold mb-3 text-gray-700">3. 非极大值抑制</h4><div id="canny3" class="pixel-grid"></div></div>`;
+            ['canny1', 'canny2', 'canny3'].forEach(id => createGrid(document.getElementById(id)));
+            elements.outputTitle.textContent = `Canny 最终边缘`;
+
+            const gaussianKernel = [[1, 4, 7, 4, 1], [4, 16, 26, 16, 4], [7, 26, 41, 26, 7], [4, 16, 26, 16, 4], [1, 4, 7, 4, 1]].map(r => r.map(v => v/273));
+            const blurred = gaussianBlur(inputPixelValues, gaussianKernel);
+            renderGrid(document.getElementById('canny1'), blurred);
+
+            const { magnitudes, directions } = sobel(blurred);
+            let maxMagnitude = Math.max(...magnitudes.flat());
+            const normalizedMagnitudes = magnitudes.map(row => row.map(val => (val / (maxMagnitude || 1)) * 255));
+            renderGrid(document.getElementById('canny2'), normalizedMagnitudes);
+
+            const nms = nonMaximumSuppression(magnitudes, directions);
+            renderGrid(document.getElementById('canny3'), nms);
+
+            const finalEdges = hysteresis(nms, 0.3, 0.8);
+            renderGrid(elements.outputGrid, finalEdges);
+            setButtonsDisabled(false);
+        }
+
+        function sobel(sourceGrid) {
+            const magnitudes = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            const directions = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            const Gx = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+            const Gy = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+            for (let y = 1; y < GRID_HEIGHT - 1; y++) {
+                for (let x = 1; x < GRID_WIDTH - 1; x++) {
+                    let sumX = 0, sumY = 0;
+                    for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+                        sumX += sourceGrid[y + j][x + i] * Gx[j + 1][i + 1];
+                        sumY += sourceGrid[y + j][x + i] * Gy[j + 1][i + 1];
+                    }
+                    magnitudes[y][x] = Math.sqrt(sumX * sumX + sumY * sumY);
+                    directions[y][x] = Math.atan2(sumY, sumX);
+                }
+            }
+            return { magnitudes, directions };
+        }
+
+        function nonMaximumSuppression(magnitudes, directions) {
+            const result = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            for (let y = 1; y < GRID_HEIGHT - 1; y++) {
+                for (let x = 1; x < GRID_WIDTH - 1; x++) {
+                    const mag = magnitudes[y][x];
+                    if (mag === 0) continue;
+                    const ang = directions[y][x] * (180.0 / Math.PI);
+                    let q = 255.0, r = 255.0;
+                    if ((-22.5 < ang && ang <= 22.5) || (157.5 < ang && ang <= 180) || (-180 < ang && ang <= -157.5)) { q = magnitudes[y][x+1]; r = magnitudes[y][x-1]; } 
+                    else if ((22.5 < ang && ang <= 67.5) || (-157.5 < ang && ang <= -112.5)) { q = magnitudes[y-1][x+1]; r = magnitudes[y+1][x-1]; } 
+                    else if ((67.5 < ang && ang <= 112.5) || (-112.5 < ang && ang <= -67.5)) { q = magnitudes[y-1][x]; r = magnitudes[y+1][x]; } 
+                    else if ((112.5 < ang && ang <= 157.5) || (-67.5 < ang && ang <= -22.5)) { q = magnitudes[y-1][x-1]; r = magnitudes[y+1][x+1]; }
+                    if (mag >= q && mag >= r) result[y][x] = mag;
+                }
+            }
+            let maxMag = Math.max(...result.flat());
+            return maxMag > 0 ? result.map(row => row.map(val => (val / maxMag) * 255)) : result;
+        }
+
+        function hysteresis(img, highThreshRatio, lowThreshRatio) {
+            const result = Array.from({ length: GRID_HEIGHT }, () => new Array(GRID_WIDTH).fill(0));
+            const strong = 255, weak = 75;
+            let maxMag = Math.max(...img.flat());
+            if (maxMag === 0) return result;
+
+            const highThresh = maxMag * highThreshRatio;
+            const lowThresh = highThresh * lowThreshRatio;
+            const stack = [];
+
+            for (let y = 1; y < GRID_HEIGHT - 1; y++) {
+                for (let x = 1; x < GRID_WIDTH - 1; x++) {
+                    if (img[y][x] > highThresh) { result[y][x] = strong; stack.push([x, y]); } 
+                    else if (img[y][x] > lowThresh) { result[y][x] = weak; }
+                }
+            }
+            
+            while (stack.length > 0) {
+                const [x, y] = stack.pop();
+                for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) {
+                    if (y + j < 0 || y + j >= GRID_HEIGHT || x + i < 0 || x + i >= GRID_WIDTH) continue;
+                    if (result[y + j][x + i] === weak) {
+                        result[y + j][x + i] = strong;
+                        stack.push([x + i, y + j]);
+                    }
+                }
+            }
+            return result.map(row => row.map(val => val === strong ? 255 : 0));
+        }
+
+        async function getGeminiExplanation() {
+            elements.geminiContainer.classList.remove('hidden');
+            elements.geminiContainer.innerHTML = '<div class="flex items-center justify-center"><div class="loader"></div><p class="ml-4 text-gray-500">正在向 Gemini 请求解释...</p></div>';
+            elements.explainBtn.disabled = true;
+
+            const userQuery = `请用通俗易懂的语言，对比解释以下几种边缘检测算法的原理、优缺点和适用场景：1. 形态学梯度 2. Sobel 算子 3. Canny 算法。并解释为什么 Canny 通常被认为是效果最好的。`;
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const payload = { contents: [{ parts: [{ text: userQuery }] }] };
+
+            try {
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    elements.geminiContainer.innerHTML = `<h3 class="text-xl font-semibold text-gray-800 mb-4">✨ Gemini 的原理解析</h3><div class="text-gray-700 space-y-4">${text.replace(/\n/g, '<br>')}</div>`;
+                } else { throw new Error("Invalid response structure."); }
+            } catch (error) {
+                console.error("Gemini API call failed:", error);
+                elements.geminiContainer.innerHTML = `<p class="text-red-500">请求 Gemini 解释失败。请稍后再试。</p>`;
+            } finally {
+                elements.explainBtn.disabled = false;
+            }
+        }
+        
+        // --- Event Listeners ---
+        elements.opButtonsContainer.addEventListener('click', (e) => {
+            if (e.target.matches('.op-btn')) {
+                const operation = e.target.dataset.op;
+                const animatedOps = ['gradient', 'sobel'];
+                if (animatedOps.includes(operation)) startAnimation(operation);
+                else {
+                    switch(operation) {
+                        case 'optimal-edge': performOptimalEdgeExtraction(); break;
+                        case 'precise-edge': performPreciseEdgeExtraction(); break;
+                        case 'canny': performCanny(); break;
+                    }
+                }
+            }
+        });
+
+        elements.resetBtn.addEventListener('click', initialize);
+        elements.explainBtn.addEventListener('click', getGeminiExplanation);
+        elements.noiseSlider.addEventListener('input', initialize);
+        elements.shapeSelector.addEventListener('input', initialize);
+
+        // --- Initial Load ---
+        initialize();
+    </script>
+</body>
+</html>
